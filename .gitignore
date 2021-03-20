@@ -38,5 +38,8 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-# R Project
-.RProj
+# R project
+.Rproj
+
+# PyCharm project files
+/\.idea
