@@ -118,3 +118,9 @@ ts.wti.monthly.log.returns <- ts(log(wti.monthly.return$value + 1),
 png("plots/0_WTI monthly log returns.png", width = 1200, height = 800)
 plot.ts(ts.wti.monthly.log.returns, ylab = "WTI monthly log returns")
 dev.off()
+
+
+### Save timeseries
+save(ts.apsp.monthly.absolute, ts.apsp.monthly.log.return, ts.brent.monthly.absolute, ts.brent.monthly.log.return, ts.dubai.monthly.absolute,
+     ts.dubai.monthly.log.returns, ts.natgas.us.monthly.absolute, ts.natgas.us.monthly.log.returns, ts.wti.monthly.absolute,
+     ts.wti.monthly.log.returns, file = "clean data/timeseries.RData")
