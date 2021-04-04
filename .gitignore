@@ -40,3 +40,6 @@ vignettes/*.pdf
 
 # PyCharm project files
 /\.idea
+
+# macOS
+.DS_Store
