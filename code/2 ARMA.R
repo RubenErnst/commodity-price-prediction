@@ -1,10 +1,12 @@
 rm(list = ls())
 
 library(tidyverse)
-library(forecast)
+library(ggplot2)
+library(rmaf)
+library(zoo)
 library(itsmr)
 library(tseries)
-library(ggplot2)
+library(forecast)
 
 # Load data
 load("clean data/timeseries.RData")
