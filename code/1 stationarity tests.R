@@ -32,17 +32,21 @@ adf.results$statistic <- c(adf.test(ts.apsp.monthly.absolute, "stationary", k = 
 
 ## p-value
 adf.results$p <- c(adf.test(ts.apsp.monthly.absolute, "stationary", k = 0)$p.value,
-                           adf.test(ts.brent.monthly.absolute, "stationary", k = 0)$p.value,
-                           adf.test(ts.dubai.monthly.absolute, "stationary", k = 0)$p.value,
-                           adf.test(ts.natgas.us.monthly.absolute, "stationary", k = 0)$p.value,
-                           adf.test(ts.wti.monthly.absolute, "stationary", k = 0)$p.value,
-                           adf.test(ts.apsp.monthly.difference, "stationary", k = 0)$p.value,
-                           adf.test(ts.brent.monthly.difference, "stationary", k = 0)$p.value,
-                           adf.test(ts.dubai.monthly.difference, "stationary", k = 0)$p.value,
-                           adf.test(ts.natgas.us.monthly.difference, "stationary", k = 0)$p.value,
-                           adf.test(ts.wti.monthly.difference, "stationary", k = 0)$p.value,
-                           adf.test(ts.apsp.monthly.log.returns, "stationary", k = 0)$p.value,
-                           adf.test(ts.brent.monthly.log.returns, "stationary", k = 0)$p.value,
-                           adf.test(ts.dubai.monthly.log.returns, "stationary", k = 0)$p.value,
-                           adf.test(ts.natgas.us.monthly.log.returns, "stationary", k = 0)$p.value,
-                           adf.test(ts.wti.monthly.log.returns, "stationary", k = 0)$p.value)
+                   adf.test(ts.brent.monthly.absolute, "stationary", k = 0)$p.value,
+                   adf.test(ts.dubai.monthly.absolute, "stationary", k = 0)$p.value,
+                   adf.test(ts.natgas.us.monthly.absolute, "stationary", k = 0)$p.value,
+                   adf.test(ts.wti.monthly.absolute, "stationary", k = 0)$p.value,
+                   adf.test(ts.apsp.monthly.difference, "stationary", k = 0)$p.value,
+                   adf.test(ts.brent.monthly.difference, "stationary", k = 0)$p.value,
+                   adf.test(ts.dubai.monthly.difference, "stationary", k = 0)$p.value,
+                   adf.test(ts.natgas.us.monthly.difference, "stationary", k = 0)$p.value,
+                   adf.test(ts.wti.monthly.difference, "stationary", k = 0)$p.value,
+                   adf.test(ts.apsp.monthly.log.returns, "stationary", k = 0)$p.value,
+                   adf.test(ts.brent.monthly.log.returns, "stationary", k = 0)$p.value,
+                   adf.test(ts.dubai.monthly.log.returns, "stationary", k = 0)$p.value,
+                   adf.test(ts.natgas.us.monthly.log.returns, "stationary", k = 0)$p.value,
+                   adf.test(ts.wti.monthly.log.returns, "stationary", k = 0)$p.value)
+
+
+### Save the results
+save(adf.results, file = "results/descriptive stats/ADF.RData")
