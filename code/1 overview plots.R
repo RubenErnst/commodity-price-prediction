@@ -39,10 +39,7 @@ cairo_pdf("plots/0_APSP monthly log returns.pdf", width = 8, height = 5.5)
 plot.ts(ts.apsp.monthly.log.returns, ylab = "APSP monthly log returns")
 dev.off()
 
-ts.apsp.monthly.difference <- ts(apsp.monthly.absolute$value - lag(apsp.monthly.absolute$value, 1),
-                                 start = c(min(apsp.monthly.absolute$year), min(apsp.monthly.absolute$month[apsp.monthly.absolute$year == min(apsp.monthly.absolute$year)])),
-                                 end = c(max(apsp.monthly.absolute$year), max(apsp.monthly.absolute$month[apsp.monthly.absolute$year == max(apsp.monthly.absolute$year)])),
-                                 frequency = 12)[-1]
+ts.apsp.monthly.difference <- diff(ts.apsp.monthly.absolute)
 
 
 ## Brent
@@ -64,10 +61,7 @@ cairo_pdf("plots/0_Brent monthly log returns.pdf", width = 8, height = 5.5)
 plot.ts(ts.brent.monthly.log.returns, ylab = "Brent monthly log returns")
 dev.off()
 
-ts.brent.monthly.difference <- ts(brent.monthly.absolute$value - lag(brent.monthly.absolute$value, 1),
-                                 start = c(min(brent.monthly.absolute$year), min(brent.monthly.absolute$month[brent.monthly.absolute$year == min(brent.monthly.absolute$year)])),
-                                 end = c(max(brent.monthly.absolute$year), max(brent.monthly.absolute$month[brent.monthly.absolute$year == max(brent.monthly.absolute$year)])),
-                                 frequency = 12)[-1]
+ts.brent.monthly.difference <- diff(ts.brent.monthly.absolute)
 
 
 ## Dubai Fateh
@@ -89,10 +83,7 @@ cairo_pdf("plots/0_Dubai monthly log returns.pdf", width = 8, height = 5.5)
 plot.ts(ts.dubai.monthly.log.returns, ylab = "Dubai Fateh monthly log returns")
 dev.off()
 
-ts.dubai.monthly.difference <- ts(dubai.monthly.absolute$value - lag(dubai.monthly.absolute$value, 1),
-                                 start = c(min(dubai.monthly.absolute$year), min(dubai.monthly.absolute$month[dubai.monthly.absolute$year == min(dubai.monthly.absolute$year)])),
-                                 end = c(max(dubai.monthly.absolute$year), max(dubai.monthly.absolute$month[dubai.monthly.absolute$year == max(dubai.monthly.absolute$year)])),
-                                 frequency = 12)[-1]
+ts.dubai.monthly.difference <- diff(ts.dubai.monthly.absolute)
 
 
 ## Nat Gas Henry Hub
@@ -114,10 +105,7 @@ cairo_pdf("plots/0_NatGas Henry Hub monthly log returns.pdf", width = 8, height 
 plot.ts(ts.natgas.us.monthly.log.returns, ylab = "Nat Gas Henry Hub monthly log returns")
 dev.off()
 
-ts.natgas.us.monthly.difference <- ts(natgas.us.monthly.absolute$value - lag(natgas.us.monthly.absolute$value, 1),
-                                 start = c(min(natgas.us.monthly.absolute$year), min(natgas.us.monthly.absolute$month[natgas.us.monthly.absolute$year == min(natgas.us.monthly.absolute$year)])),
-                                 end = c(max(natgas.us.monthly.absolute$year), max(natgas.us.monthly.absolute$month[natgas.us.monthly.absolute$year == max(natgas.us.monthly.absolute$year)])),
-                                 frequency = 12)[-1]
+ts.natgas.us.monthly.difference <- diff(ts.natgas.us.monthly.absolute)
 
 
 ## WTI
@@ -139,10 +127,7 @@ cairo_pdf("plots/0_WTI monthly log returns.pdf", width = 8, height = 5.5)
 plot.ts(ts.wti.monthly.log.returns, ylab = "WTI monthly log returns")
 dev.off()
 
-ts.wti.monthly.difference <- ts(wti.monthly.absolute$value - lag(wti.monthly.absolute$value, 1),
-                                 start = c(min(wti.monthly.absolute$year), min(wti.monthly.absolute$month[wti.monthly.absolute$year == min(wti.monthly.absolute$year)])),
-                                 end = c(max(wti.monthly.absolute$year), max(wti.monthly.absolute$month[wti.monthly.absolute$year == max(wti.monthly.absolute$year)])),
-                                 frequency = 12)[-1]
+ts.wti.monthly.difference <- diff(ts.wti.monthly.absolute)
 
 
 ### Save timeseries
