@@ -33,7 +33,7 @@ ann_recursive_pred <- function(model, h, lagged.data){
   names(newdata) <- names(lagged.data)
   
   for (i in 1:(nrow(newdata))){
-    newdata[i,] <- c(rep(NA, i - 1), as.numeric(lagged.data[1:(h - i + 1)]))
+    newdata[i,] <- c(rep(NA, i - 1), as.numeric(lagged.data[1:(h - i + 1)])) ### TODO: Dimension error: does newdata have to be inverted????????????????????????
   }
   
   pred <- c()
@@ -156,3 +156,12 @@ result <- cbind(apsp.log.returns.lagged[13:362,], ann$net.result[[1]])
 pred <- predict(object = ann, newdata = apsp.log.returns.lagged[363:374, ])
 mae(apsp.log.returns.lagged$y[363:374], pred)
 mape(apsp.log.returns.lagged$y[363:374], pred)
+
+
+### Test loop for tuning
+tuning.results <- data.frame("n_lags" = NULL, "mae" = NULL, "mape" = NULL)
+for (l in 6:18){
+  res <- ann_tune(ts.apsp.monthly.log.returns, c(15,10,5), 0.01, 12, l)
+  tuning.results <- rbind(tuning.results, combine(list("n_lags" = l), res))
+  print(paste0("Finished ", l))
+}
