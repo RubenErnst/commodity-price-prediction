@@ -160,7 +160,7 @@ mae(apsp.log.returns.lagged$y[363:374], pred)
 mape(apsp.log.returns.lagged$y[363:374], pred)
 
 
-### Test loop for tuning
+### Tune APSP log returns
 # Generate hidden layer combinations
 hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
 tuning.results <- data.frame("n_lags" = NULL, "hidden_config" = NULL, "mae" = NULL, "mape" = NULL)
@@ -168,6 +168,8 @@ for (l in 5:20){
   for (hl in 1:nrow(hl_combinations)){
     res <- ann_tune(data_ts = ts.apsp.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
     tuning.results <- rbind(tuning.results, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
-    print(paste0("Finished l: ", l, ", hl: ", hl_combinations[hl,])) 
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
   }
 }
+
+### TODO: l: 6, hl: 15, 5, 1
