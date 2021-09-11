@@ -33,15 +33,17 @@ ann_recursive_pred <- function(model, h, lagged.data){
   names(newdata) <- names(lagged.data)
   
   for (i in 1:(nrow(newdata))){
-    newdata[i,] <- c(rep(NA, i - 1), as.numeric(lagged.data[1:(h - i + 1)])) ### TODO: Dimension error: does newdata have to be inverted????????????????????????
+    if (ncol(newdata) - i + 1 > 0){
+      newdata[i,] <- c(rep(NA, c(ncol(newdata), i - 1)[which.min(c(ncol(newdata), i - 1))]), as.numeric(lagged.data[1:(ncol(newdata) - i + 1)]))
+    }
   }
   
   pred <- c()
   for (i in 1:nrow(newdata)){
     pred <- c(predict(object = model, newdata = newdata[i,])[[1]], pred)
-    newdata[(i + 1), 1:i] <- pred
+    newdata[(i + 1), 1:c(ncol(newdata), i)[which.min(c(ncol(newdata), i))]] <- pred[1:c(ncol(newdata), i)[which.min(c(ncol(newdata), i))]]
   }
-  return(pred)
+  return(rev(pred))
 }
 
 ann_tune <- function(data_ts, hidden_layers, target_threshold, h, n_lags){
@@ -159,9 +161,13 @@ mape(apsp.log.returns.lagged$y[363:374], pred)
 
 
 ### Test loop for tuning
-tuning.results <- data.frame("n_lags" = NULL, "mae" = NULL, "mape" = NULL)
-for (l in 6:18){
-  res <- ann_tune(ts.apsp.monthly.log.returns, c(15,10,5), 0.01, 12, l)
-  tuning.results <- rbind(tuning.results, combine(list("n_lags" = l), res))
-  print(paste0("Finished ", l))
+# Generate hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+tuning.results <- data.frame("n_lags" = NULL, "hidden_config" = NULL, "mae" = NULL, "mape" = NULL)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.apsp.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results <- rbind(tuning.results, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", hl_combinations[hl,])) 
+  }
 }
