@@ -274,4 +274,4 @@ autoplot(forecast(fit, h = 12))
 
 
 ### Save the results
-save(arima, file = "results/econometric models/ARIMA.RData")
+save(arima.results, file = "results/econometric models/ARIMA.RData")
