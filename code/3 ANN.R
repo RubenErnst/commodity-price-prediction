@@ -160,16 +160,181 @@ mae(apsp.log.returns.lagged$y[363:374], pred)
 mape(apsp.log.returns.lagged$y[363:374], pred)
 
 
+########################################################################################################################################################################
+
+
+##### ANN Tuning -----
+
 ### Tune APSP log returns
-# Generate hidden layer combinations
+tuning.results.apsp.log.returns <- data.frame("n_lags" = NULL, "hidden_config" = NULL, "mae" = NULL, "mape" = NULL)
+# Generate 3 hidden layer combinations
 hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
-tuning.results <- data.frame("n_lags" = NULL, "hidden_config" = NULL, "mae" = NULL, "mape" = NULL)
 for (l in 5:20){
   for (hl in 1:nrow(hl_combinations)){
     res <- ann_tune(data_ts = ts.apsp.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
-    tuning.results <- rbind(tuning.results, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    tuning.results.apsp.log.returns <- rbind(tuning.results.apsp.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
     print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
   }
 }
 
-### TODO: l: 6, hl: 15, 5, 1
+# 2 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.apsp.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.apsp.log.returns <- rbind(tuning.results.apsp.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
+  }
+}
+
+# 1 hidden layer
+hl_combinations <- data.frame("h1" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.apsp.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.apsp.log.returns <- rbind(tuning.results.apsp.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
+  }
+}
+
+save(tuning.results.apsp.log.returns, file = "results/ml models/APSP_log_returns.RData")
+
+
+### Tune Brent log returns
+tuning.results.brent.log.returns <- data.frame("n_lags" = NULL, "hidden_config" = NULL, "mae" = NULL, "mape" = NULL)
+# Generate 3 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.brent.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.brent.log.returns <- rbind(tuning.results.brent.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
+  }
+}
+
+# 2 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.brent.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.brent.log.returns <- rbind(tuning.results.brent.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
+  }
+}
+
+# 1 hidden layer
+hl_combinations <- data.frame("h1" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.brent.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.brent.log.returns <- rbind(tuning.results.brent.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
+  }
+}
+
+save(tuning.results.brent.log.returns, file = "results/ml models/Brent_log_returns.RData")
+
+
+### Tune Dubai log returns
+tuning.results.dubai.log.returns <- data.frame("n_lags" = NULL, "hidden_config" = NULL, "mae" = NULL, "mape" = NULL)
+# Generate 3 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.dubai.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.dubai.log.returns <- rbind(tuning.results.dubai.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
+  }
+}
+
+# 2 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.dubai.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.dubai.log.returns <- rbind(tuning.results.dubai.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
+  }
+}
+
+# 1 hidden layer
+hl_combinations <- data.frame("h1" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.dubai.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.dubai.log.returns <- rbind(tuning.results.dubai.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
+  }
+}
+
+save(tuning.results.dubai.log.returns, file = "results/ml models/Dubai_log_returns.RData")
+
+
+### Tune US NatGas log returns
+tuning.results.natgas.us.log.returns <- data.frame("n_lags" = NULL, "hidden_config" = NULL, "mae" = NULL, "mape" = NULL)
+# Generate 3 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.us.natgas.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.us.natgas.log.returns <- rbind(tuning.results.us.natgas.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
+  }
+}
+
+# 2 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.us.natgas.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.us.natgas.log.returns <- rbind(tuning.results.us.natgas.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
+  }
+}
+
+# 1 hidden layer
+hl_combinations <- data.frame("h1" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.us.natgas.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.us.natgas.log.returns <- rbind(tuning.results.us.natgas.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
+  }
+}
+
+save(tuning.results.us.natgas.log.returns, file = "results/ml models/NatGas_log_returns.RData")
+
+
+### Tune WTI log returns
+tuning.results.wti.log.returns <- data.frame("n_lags" = NULL, "hidden_config" = NULL, "mae" = NULL, "mape" = NULL)
+# Generate 3 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.wti.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.wti.log.returns <- rbind(tuning.results.wti.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
+  }
+}
+
+# 2 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.wti.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.wti.log.returns <- rbind(tuning.results.wti.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
+  }
+}
+
+# 1 hidden layer
+hl_combinations <- data.frame("h1" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.wti.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.wti.log.returns <- rbind(tuning.results.wti.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
+  }
+}
+
+save(tuning.results.wti.log.returns, file = "results/ml models/WTI_log_returns.RData")
