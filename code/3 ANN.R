@@ -4,6 +4,8 @@ library(tidyverse)
 library(forecast)
 library(tsfgrnn)
 library(neuralnet)
+library(parallel)
+library(doSNOW)
 
 # Load data
 load("clean data/timeseries.RData")
@@ -338,3 +340,46 @@ for (l in 5:20){
 }
 
 save(tuning.results.wti.log.returns, file = "results/ml models/WTI_log_returns.RData")
+
+
+
+
+##### Parallel processing
+cl <- makeSOCKcluster(4)
+registerDoSNOW(cl)
+
+my_fun <- function(data_ts, l, hl){
+  res <- ann_tune(data_ts = data_ts, hidden_layers = hl, 0.01, 12, l)
+  print(paste0("Finished l: ", l, ", hl: ", paste(hl, collapse = ", ")))
+  return(data.frame("n_lags" = l, "hidden_config" = paste0(hl, collapse = ", "), "mae" = res[[1]], "mape" = res[[2]]))
+}
+
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/120000"))})
+
+tuning.results.dubai.log.returns <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.dubai.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/6000"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.dubai.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.dubai.log.returns <- rbind(tuning.results.dubai.log.returns, temp); rm(temp)
+
+hl_combinations <- data.frame("h1" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/300"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.dubai.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.dubai.log.returns <- rbind(tuning.results.dubai.log.returns, temp); rm(temp)
+
+stopImplicitCluster()
