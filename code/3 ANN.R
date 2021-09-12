@@ -164,7 +164,7 @@ mape(apsp.log.returns.lagged$y[363:374], pred)
 # Generate hidden layer combinations
 hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
 tuning.results <- data.frame("n_lags" = NULL, "hidden_config" = NULL, "mae" = NULL, "mape" = NULL)
-for (l in 5:20){
+for (l in 6:20){
   for (hl in 1:nrow(hl_combinations)){
     res <- ann_tune(data_ts = ts.apsp.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
     tuning.results <- rbind(tuning.results, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
