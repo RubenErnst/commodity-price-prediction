@@ -4,6 +4,9 @@ library(tidyverse)
 library(forecast)
 library(tsfgrnn)
 library(neuralnet)
+library(parallel)
+library(doParallel)
+library(doSNOW)
 
 # Load data
 load("clean data/timeseries.RData")
@@ -31,13 +34,13 @@ ann_recursive_pred <- function(model, h, lagged.data){
   # Prepare newdata
   newdata <- as.data.frame(matrix(data = NA, nrow = h, ncol = ncol(lagged.data)))
   names(newdata) <- names(lagged.data)
-  
+
   for (i in 1:(nrow(newdata))){
     if (ncol(newdata) - i + 1 > 0){
       newdata[i,] <- c(rep(NA, c(ncol(newdata), i - 1)[which.min(c(ncol(newdata), i - 1))]), as.numeric(lagged.data[1:(ncol(newdata) - i + 1)]))
     }
   }
-  
+
   pred <- c()
   for (i in 1:nrow(newdata)){
     pred <- c(predict(object = model, newdata = newdata[i,])[[1]], pred)
@@ -52,18 +55,18 @@ ann_tune <- function(data_ts, hidden_layers, target_threshold, h, n_lags){
   for (i in 1:n_lags){
     eval(parse(text = paste0("lagged$l", i, " = lag(data_ts[1:length(data_ts)], ", i, ")")))
   }
-  
+
   # Train ANN
   eval(parse(text = paste0("ann <- neuralnet(formula = y ~ ", paste(names(lagged)[-1], collapse = " + "), ", data = lagged[", n_lags + 1, ":(nrow(lagged) - ", n_lags, "),], hidden = ", paste0("c(", paste(hidden_layers, collapse = ", "), ")"), ", threshold = ", target_threshold, ", lifesign = 'full')")))
-  
+
   # Recursively predict using the ANN
   pred <- ann_recursive_pred(model = ann, h = h, lagged.data = lagged[(nrow(lagged) - h + 1), -1])
   # eval(parse(text = paste0("pred <- predict(object = ann, newdata = lagged[", nrow(lagged) - h + 1, ":", nrow(lagged), ",])")))
-  
+
   # Evaluate results
   eval(parse(text = paste0("mae <- mae(lagged$y[", nrow(lagged) - h + 1, ":", nrow(lagged), "], pred)")))
   eval(parse(text = paste0("mape <- mape(lagged$y[", nrow(lagged) - h + 1, ":", nrow(lagged), "], pred)")))
-  
+
   return(list("mae" = mae, "mape" = mape))
 }
 
@@ -160,16 +163,354 @@ mae(apsp.log.returns.lagged$y[363:374], pred)
 mape(apsp.log.returns.lagged$y[363:374], pred)
 
 
+########################################################################################################################################################################
+
+
+##### ANN Tuning -----
+
 ### Tune APSP log returns
-# Generate hidden layer combinations
+tuning.results.apsp.log.returns <- data.frame("n_lags" = NULL, "hidden_config" = NULL, "mae" = NULL, "mape" = NULL)
+# Generate 3 hidden layer combinations
 hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
-tuning.results <- data.frame("n_lags" = NULL, "hidden_config" = NULL, "mae" = NULL, "mape" = NULL)
-for (l in 6:20){
+for (l in 5:20){
   for (hl in 1:nrow(hl_combinations)){
     res <- ann_tune(data_ts = ts.apsp.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
-    tuning.results <- rbind(tuning.results, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
-    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", "))) 
+    tuning.results.apsp.log.returns <- rbind(tuning.results.apsp.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", ")))
   }
 }
 
-### TODO: l: 6, hl: 15, 5, 1
+# 2 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.apsp.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.apsp.log.returns <- rbind(tuning.results.apsp.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", ")))
+  }
+}
+
+# 1 hidden layer
+hl_combinations <- data.frame("h1" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.apsp.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.apsp.log.returns <- rbind(tuning.results.apsp.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", ")))
+  }
+}
+
+save(tuning.results.apsp.log.returns, file = "results/ml models/APSP_log_returns.RData")
+
+
+### Tune Brent log returns
+tuning.results.brent.log.returns <- data.frame("n_lags" = NULL, "hidden_config" = NULL, "mae" = NULL, "mape" = NULL)
+# Generate 3 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.brent.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.brent.log.returns <- rbind(tuning.results.brent.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", ")))
+  }
+}
+
+# 2 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.brent.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.brent.log.returns <- rbind(tuning.results.brent.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", ")))
+  }
+}
+
+# 1 hidden layer
+hl_combinations <- data.frame("h1" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.brent.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.brent.log.returns <- rbind(tuning.results.brent.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", ")))
+  }
+}
+
+save(tuning.results.brent.log.returns, file = "results/ml models/Brent_log_returns.RData")
+
+
+### Tune Dubai log returns
+tuning.results.dubai.log.returns <- data.frame("n_lags" = NULL, "hidden_config" = NULL, "mae" = NULL, "mape" = NULL)
+# Generate 3 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.dubai.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.dubai.log.returns <- rbind(tuning.results.dubai.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", ")))
+  }
+}
+
+# 2 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.dubai.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.dubai.log.returns <- rbind(tuning.results.dubai.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", ")))
+  }
+}
+
+# 1 hidden layer
+hl_combinations <- data.frame("h1" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.dubai.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.dubai.log.returns <- rbind(tuning.results.dubai.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", ")))
+  }
+}
+
+save(tuning.results.dubai.log.returns, file = "results/ml models/Dubai_log_returns.RData")
+
+
+### Tune US NatGas log returns
+tuning.results.natgas.us.log.returns <- data.frame("n_lags" = NULL, "hidden_config" = NULL, "mae" = NULL, "mape" = NULL)
+# Generate 3 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.us.natgas.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.us.natgas.log.returns <- rbind(tuning.results.us.natgas.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", ")))
+  }
+}
+
+# 2 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.us.natgas.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.us.natgas.log.returns <- rbind(tuning.results.us.natgas.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", ")))
+  }
+}
+
+# 1 hidden layer
+hl_combinations <- data.frame("h1" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.us.natgas.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.us.natgas.log.returns <- rbind(tuning.results.us.natgas.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", ")))
+  }
+}
+
+save(tuning.results.us.natgas.log.returns, file = "results/ml models/NatGas_log_returns.RData")
+
+
+### Tune WTI log returns
+tuning.results.wti.log.returns <- data.frame("n_lags" = NULL, "hidden_config" = NULL, "mae" = NULL, "mape" = NULL)
+# Generate 3 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.wti.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.wti.log.returns <- rbind(tuning.results.wti.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", ")))
+  }
+}
+
+# 2 hidden layer combinations
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.wti.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.wti.log.returns <- rbind(tuning.results.wti.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", ")))
+  }
+}
+
+# 1 hidden layer
+hl_combinations <- data.frame("h1" = 1:20)
+for (l in 5:20){
+  for (hl in 1:nrow(hl_combinations)){
+    res <- ann_tune(data_ts = ts.wti.monthly.log.returns, hidden_layers = hl_combinations[hl,], 0.01, 12, l)
+    tuning.results.wti.log.returns <- rbind(tuning.results.wti.log.returns, combine(list("n_lags" = l, "hidden_config" = paste0(hl_combinations[hl,], collapse = ", ")), res))
+    print(paste0("Finished l: ", l, ", hl: ", paste(hl_combinations[hl,], collapse = ", ")))
+  }
+}
+
+save(tuning.results.wti.log.returns, file = "results/ml models/WTI_log_returns.RData")
+
+
+
+
+##### Parallel processing
+cl <- makeSOCKcluster(4)
+registerDoSNOW(cl)
+
+my_fun <- function(data_ts, l, hl){
+  res <- ann_tune(data_ts = data_ts, hidden_layers = hl, 0.01, 12, l)
+  print(paste0("Finished l: ", l, ", hl: ", paste(hl, collapse = ", ")))
+  return(data.frame("n_lags" = l, "hidden_config" = paste0(hl, collapse = ", "), "mae" = res[[1]], "mape" = res[[2]]))
+}
+
+
+### APSP
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/128000"))})
+
+tuning.results.apsp.log.returns <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.apsp.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/6400"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.apsp.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.apsp.log.returns <- rbind(tuning.results.apsp.log.returns, temp); rm(temp)
+
+hl_combinations <- data.frame("h1" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/320"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.apsp.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.apsp.log.returns <- rbind(tuning.results.apsp.log.returns, temp); rm(temp)
+
+save(tuning.results.apsp.log.returns, file = "results/ml models/APSP_log_returns.RData")
+
+
+### Brent
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/128000"))})
+
+tuning.results.brent.log.returns <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.brent.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/6400"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.brent.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.brent.log.returns <- rbind(tuning.results.brent.log.returns, temp); rm(temp)
+
+hl_combinations <- data.frame("h1" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/320"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.brent.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.brent.log.returns <- rbind(tuning.results.brent.log.returns, temp); rm(temp)
+
+save(tuning.results.brent.log.returns, file = "results/ml models/Brent_log_returns.RData")
+
+### Dubai
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/128000"))})
+
+tuning.results.dubai.log.returns <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.dubai.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/6400"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.dubai.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.dubai.log.returns <- rbind(tuning.results.dubai.log.returns, temp); rm(temp)
+
+hl_combinations <- data.frame("h1" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/320"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.dubai.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.dubai.log.returns <- rbind(tuning.results.dubai.log.returns, temp); rm(temp)
+
+save(tuning.results.dubai.log.returns, file = "results/ml models/Dubai_log_returns.RData")
+
+### US NatGas
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/128000"))})
+
+tuning.results.natgas.us.log.returns <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.natgas.us.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/6400"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.natgas.us.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.natgas.us.log.returns <- rbind(tuning.results.natgas.us.log.returns, temp); rm(temp)
+
+hl_combinations <- data.frame("h1" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/320"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.natgas.us.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.natgas.us.log.returns <- rbind(tuning.results.natgas.us.log.returns, temp); rm(temp)
+
+save(tuning.results.natgas.us.log.returns, file = "results/ml models/NatGas_log_returns.RData")
+
+### WTI
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/128000"))})
+
+tuning.results.wti.log.returns <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.wti.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/6400"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.wti.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.wti.log.returns <- rbind(tuning.results.wti.log.returns, temp); rm(temp)
+
+hl_combinations <- data.frame("h1" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/320"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.wti.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.wti.log.returns <- rbind(tuning.results.wti.log.returns, temp); rm(temp)
+
+save(tuning.results.wti.log.returns, file = "results/ml models/WTI_log_returns.RData")
+
+
+snow::stopCluster(cl); rm(cl)
