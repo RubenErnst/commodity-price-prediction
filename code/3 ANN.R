@@ -5,6 +5,7 @@ library(forecast)
 library(tsfgrnn)
 library(neuralnet)
 library(parallel)
+library(doParallel)
 library(doSNOW)
 
 # Load data
@@ -354,8 +355,73 @@ my_fun <- function(data_ts, l, hl){
   return(data.frame("n_lags" = l, "hidden_config" = paste0(hl, collapse = ", "), "mae" = res[[1]], "mape" = res[[2]]))
 }
 
+
+### APSP
 hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
-opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/120000"))})
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/128000"))})
+
+tuning.results.apsp.log.returns <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.apsp.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/6400"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.apsp.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.apsp.log.returns <- rbind(tuning.results.apsp.log.returns, temp); rm(temp)
+
+hl_combinations <- data.frame("h1" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/320"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.apsp.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.apsp.log.returns <- rbind(tuning.results.apsp.log.returns, temp); rm(temp)
+
+save(tuning.results.apsp.log.returns, file = "results/ml models/APSP_log_returns.RData")
+
+
+### Brent
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/128000"))})
+
+tuning.results.brent.log.returns <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.brent.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/6400"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.brent.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.brent.log.returns <- rbind(tuning.results.brent.log.returns, temp); rm(temp)
+
+hl_combinations <- data.frame("h1" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/320"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.brent.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.brent.log.returns <- rbind(tuning.results.brent.log.returns, temp); rm(temp)
+
+save(tuning.results.brent.log.returns, file = "results/ml models/Brent_log_returns.RData")
+
+### Dubai
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/128000"))})
 
 tuning.results.dubai.log.returns <- foreach (l = 5:20, .combine = rbind) %:%
   foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
@@ -363,7 +429,7 @@ tuning.results.dubai.log.returns <- foreach (l = 5:20, .combine = rbind) %:%
   }
 
 hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
-opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/6000"))})
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/6400"))})
 
 temp <- foreach (l = 5:20, .combine = rbind) %:%
   foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
@@ -373,7 +439,7 @@ temp <- foreach (l = 5:20, .combine = rbind) %:%
 tuning.results.dubai.log.returns <- rbind(tuning.results.dubai.log.returns, temp); rm(temp)
 
 hl_combinations <- data.frame("h1" = 1:20)
-opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/300"))})
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/320"))})
 
 temp <- foreach (l = 5:20, .combine = rbind) %:%
   foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
@@ -382,4 +448,69 @@ temp <- foreach (l = 5:20, .combine = rbind) %:%
 
 tuning.results.dubai.log.returns <- rbind(tuning.results.dubai.log.returns, temp); rm(temp)
 
-stopImplicitCluster()
+save(tuning.results.dubai.log.returns, file = "results/ml models/Dubai_log_returns.RData")
+
+### US NatGas
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/128000"))})
+
+tuning.results.natgas.us.log.returns <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.natgas.us.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/6400"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.natgas.us.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.natgas.us.log.returns <- rbind(tuning.results.natgas.us.log.returns, temp); rm(temp)
+
+hl_combinations <- data.frame("h1" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/320"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.natgas.us.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.natgas.us.log.returns <- rbind(tuning.results.natgas.us.log.returns, temp); rm(temp)
+
+save(tuning.results.natgas.us.log.returns, file = "results/ml models/NatGas_log_returns.RData")
+
+### WTI
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/128000"))})
+
+tuning.results.wti.log.returns <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.wti.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/6400"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.wti.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.wti.log.returns <- rbind(tuning.results.wti.log.returns, temp); rm(temp)
+
+hl_combinations <- data.frame("h1" = 1:20)
+opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/320"))})
+
+temp <- foreach (l = 5:20, .combine = rbind) %:%
+  foreach(hl = 1:nrow(hl_combinations), .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+    my_fun(ts.wti.monthly.log.returns, l, hl_combinations[hl,])
+  }
+
+tuning.results.wti.log.returns <- rbind(tuning.results.wti.log.returns, temp); rm(temp)
+
+save(tuning.results.wti.log.returns, file = "results/ml models/WTI_log_returns.RData")
+
+
+snow::stopCluster(cl); rm(cl)
