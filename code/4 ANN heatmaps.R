@@ -33,7 +33,7 @@ apsp.plot.data$hl_category <- factor(apsp.plot.data$hl_category, levels = c("1  
 apsp.mape.heatmap <- ggplot(data = apsp.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
   geom_tile() +
   scale_fill_viridis(name = "MAPE", option = "magma", discrete = FALSE, direction = -1) +
-  labs(title = "ANN error heatmap", subtitle = "APSP log returns", xlab = "hidden layer configuration", ylab = "nr. of lags used") +
+  labs(title = "ANN error heatmap", subtitle = "APSP log returns", x = "hidden layer configuration", y = "nr. of lags used") +
   theme_bw() +
   theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
         axis.line = element_blank(),
@@ -71,7 +71,7 @@ brent.plot.data$hl_category <- factor(brent.plot.data$hl_category, levels = c("1
 brent.mape.heatmap <- ggplot(data = brent.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
   geom_tile() +
   scale_fill_viridis(name = "MAPE", option = "magma", discrete = FALSE, direction = -1) +
-  labs(title = "ANN error heatmap", subtitle = "Brent log returns", xlab = "hidden layer configuration", ylab = "nr. of lags used") +
+  labs(title = "ANN error heatmap", subtitle = "Brent log returns", x = "hidden layer configuration", y = "nr. of lags used") +
   theme_bw() +
   theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
         axis.line = element_blank(),
@@ -109,7 +109,7 @@ dubai.plot.data$hl_category <- factor(dubai.plot.data$hl_category, levels = c("1
 dubai.mape.heatmap <- ggplot(data = dubai.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
   geom_tile() +
   scale_fill_viridis(name = "MAPE", option = "magma", discrete = FALSE, direction = -1) +
-  labs(title = "ANN error heatmap", subtitle = "Dubai Fateh log returns", xlab = "hidden layer configuration", ylab = "nr. of lags used") +
+  labs(title = "ANN error heatmap", subtitle = "Dubai Fateh log returns", x = "hidden layer configuration", y = "nr. of lags used") +
   theme_bw() +
   theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
         axis.line = element_blank(),
@@ -147,7 +147,7 @@ natgas.us.plot.data$hl_category <- factor(natgas.us.plot.data$hl_category, level
 natgas.us.mape.heatmap <- ggplot(data = natgas.us.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
   geom_tile() +
   scale_fill_viridis(name = "MAPE", option = "magma", discrete = FALSE, direction = -1) +
-  labs(title = "ANN error heatmap", subtitle = "NatGas US log returns", xlab = "hidden layer configuration", ylab = "nr. of lags used") +
+  labs(title = "ANN error heatmap", subtitle = "NatGas US log returns", x = "hidden layer configuration", y = "nr. of lags used") +
   theme_bw() +
   theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
         axis.line = element_blank(),
@@ -185,7 +185,7 @@ wti.plot.data$hl_category <- factor(wti.plot.data$hl_category, levels = c("1  la
 wti.mape.heatmap <- ggplot(data = wti.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
   geom_tile() +
   scale_fill_viridis(name = "MAPE", option = "magma", discrete = FALSE, direction = -1) +
-  labs(title = "ANN error heatmap", subtitle = "WTI log returns", xlab = "hidden layer configuration", ylab = "nr. of lags used") +
+  labs(title = "ANN error heatmap", subtitle = "WTI log returns", x = "hidden layer configuration", y = "nr. of lags used") +
   theme_bw() +
   theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
         axis.line = element_blank(),
