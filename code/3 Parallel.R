@@ -8,7 +8,7 @@ library(doSNOW)
 
 
 # Load data
-load("clean data/timeseries.RData")
+load("/Users/rubenernst/OneDrive - Universität St.Gallen/BA/commodities-pricing/clean data/timeseries.RData")
 
 # Target functions
 mape <- function(y, pred){
@@ -56,6 +56,7 @@ ann_tune <- function(data_ts, hidden_layers, target_threshold, h, n_lags){
   }
   
   # Train ANN
+  set.seed(42)
   eval(parse(text = paste0("ann <- neuralnet(formula = y ~ ", paste(names(lagged)[-1], collapse = " + "), ", data = lagged[", n_lags + 1, ":(nrow(lagged) - ", n_lags, "),], hidden = ", paste0("c(", paste(hidden_layers, collapse = ", "), ")"), ", threshold = ", target_threshold, ", lifesign = 'full')")))
   
   # Recursively predict using the ANN
@@ -70,22 +71,38 @@ ann_tune <- function(data_ts, hidden_layers, target_threshold, h, n_lags){
 }
 
 
-##### Cluster -----
-cl <- makeSOCKcluster(8)
-registerDoSNOW(cl)
-opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/120000"))})
+# ##### Cluster -----
+# cl <- makeSOCKcluster(8)
+# registerDoSNOW(cl)
+# opts <- list(progress=function(t){print(paste0("Finished task: ", t, "/120000"))})
+# 
+# hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+# my_fun <- function(l, hl){
+#   res <- ann_tune(data_ts = ts.apsp.monthly.log.returns, hidden_layers = hl, 0.01, 12, l)
+#   print(paste0("Finished l: ", l, ", hl: ", paste(hl, collapse = ", ")))
+#   return(data.frame("n_lags" = l, "hidden_config" = paste0(hl, collapse = ", "), "mae" = res[[1]], "mape" = res[[2]]))
+# }
+# 
+# # registerDoParallel(8)  # use multicore, set to the number of our cores
+# tuning.results.natgas.us.log.returns <- foreach (l = 5:20, .combine = rbind) %:%
+#   foreach(hl = 1:20, .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
+#     my_fun(l, hl_combinations[hl,])
+#   }
+# 
+# stopImplicitCluster()
 
-hl_combinations <- expand.grid("h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
-my_fun <- function(l, hl){
-  res <- ann_tune(data_ts = ts.apsp.monthly.log.returns, hidden_layers = hl, 0.01, 12, l)
-  print(paste0("Finished l: ", l, ", hl: ", paste(hl, collapse = ", ")))
-  return(data.frame("n_lags" = l, "hidden_config" = paste0(hl, collapse = ", "), "mae" = res[[1]], "mape" = res[[2]]))
+
+
+
+##### Forking -----
+library(lme4)
+fork.params <- expand.grid("l" = 5:20, "h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+my_fun <- function(l, h1, h2, h3){
+  res <- ann_tune(data_ts = ts.brent.monthly.log.returns, hidden_layers = c(h1, h2, h3), 0.01, 12, l)
+  print(paste0("Finished l: ", l, ", hl: ", paste(h1, h2, h3, collapse = ", ")))
+  return(data.frame("n_lags" = l, "hidden_config" = paste(h1, h2, h3, sep = ", "), "mae" = res[[1]], "mape" = res[[2]]))
 }
 
-# registerDoParallel(8)  # use multicore, set to the number of our cores
-tuning.results.natgas.us.log.returns <- foreach (l = 5:20, .combine = rbind) %:%
-  foreach(hl = 1:20, .combine = rbind, .options.snow = opts, .packages = "neuralnet") %dopar% {
-    my_fun(l, hl_combinations[hl,])
-  }
+tuning.results.forked <- mcmapply(FUN = function(l, h1, h2, h3){return(my_fun(l, h1, h2, h3))}, l = fork.params$l, h1 = fork.params$h1, h2 = fork.params$h2, h3 = fork.params$h3)
 
-stopImplicitCluster()
+save(tuning.results.forked, file = "results/ml models/Brent_log_returns_forked.RData")
