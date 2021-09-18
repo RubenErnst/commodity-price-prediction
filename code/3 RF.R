@@ -4,6 +4,8 @@ library(tidyverse)
 library(tsibble)
 library(forecast)
 library(randomForest)
+library(parallel)
+library(doParallel)
 
 
 # Load data
@@ -25,6 +27,48 @@ mape <- function(y, pred){
 mae <- function(y, pred){
   out <- mean(abs(y - pred))
   return(out)
+}
+
+# Recursive RF prediction
+rf_recursive_pred <- function(model, h, lagged.data){
+  # Prepare newdata
+  newdata <- as.data.frame(matrix(data = NA, nrow = h, ncol = ncol(lagged.data)))
+  names(newdata) <- names(lagged.data)
+  
+  for (i in 1:(nrow(newdata))){
+    if (ncol(newdata) - i + 1 > 0){
+      newdata[i,] <- c(rep(NA, c(ncol(newdata), i - 1)[which.min(c(ncol(newdata), i - 1))]), as.numeric(lagged.data[1:(ncol(newdata) - i + 1)]))
+    }
+  }
+  
+  pred <- c()
+  for (i in 1:nrow(newdata)){
+    pred <- c(predict(object = model, newdata = newdata[i,])[[1]], pred)
+    newdata[(i + 1), 1:c(ncol(newdata), i)[which.min(c(ncol(newdata), i))]] <- pred[1:c(ncol(newdata), i)[which.min(c(ncol(newdata), i))]]
+  }
+  return(rev(pred))
+}
+
+rf_tune <- function(data_ts, ntree, mtry, h, n_lags){
+  # Build lagged dataset
+  lagged <- data.frame("y" = data_ts[1:length(data_ts)])
+  for (i in 1:n_lags){
+    eval(parse(text = paste0("lagged$l", i, " = lag(data_ts[1:length(data_ts)], ", i, ")")))
+  }
+  
+  # Train ANN
+  set.seed(42)
+  eval(parse(text = paste0("rf <- randomForest(x = lagged[", n_lags + 1, ":(nrow(lagged) - ", n_lags, "),-1], y = lagged$y[", n_lags + 1, ":(nrow(lagged) - ", n_lags, ")], ntree = ", ntree, ", mtry = ", mtry, ")")))
+  
+  # Recursively predict using the ANN
+  pred <- rf_recursive_pred(model = rf, h = h, lagged.data = lagged[(nrow(lagged) - h + 1), -1])
+  # eval(parse(text = paste0("pred <- predict(object = ann, newdata = lagged[", nrow(lagged) - h + 1, ":", nrow(lagged), ",])")))
+  
+  # Evaluate results
+  eval(parse(text = paste0("mae <- mae(lagged$y[", nrow(lagged) - h + 1, ":", nrow(lagged), "], pred)")))
+  eval(parse(text = paste0("mape <- mape(lagged$y[", nrow(lagged) - h + 1, ":", nrow(lagged), "], pred)")))
+  
+  return(list("mae" = mae, "mape" = mape))
 }
 
 
@@ -74,3 +118,106 @@ for(i in 1:12){
 }
 
 mape(ts.apsp.monthly.log.returns[363:374], pred)
+
+
+
+### Tune RF with forking
+### APSP
+fork.params <- expand.grid("l" = 5:20, "ntree" = seq(1, 250, 1), "mtry" = 1:5)
+tuning_forked <- function(l, ntree, mtry){
+  res <- rf_tune(data_ts = ts.apsp.monthly.log.returns, ntree = ntree, mtry = mtry, h = 12, n_lags = l)
+  print(paste0("Finished l: ", l, ", ntree: ", ntree, ", mtry: ", mtry))
+  return(data.frame("n_lags" = l, "ntree" = ntree, "mtry" = mtry, "mae" = res[[1]], "mape" = res[[2]]))
+}
+
+tuning.results.apsp.log.returns.forked <- mcmapply(FUN = function(l, ntree, mtry){return(tuning_forked(l, ntree, mtry))}, l = fork.params$l, ntree = fork.params$ntree, mtry = fork.params$mtry)
+
+tuning.results.apsp.log.returns.forked <- as.data.frame(t(tuning.results.apsp.log.returns.forked))
+tuning.results.apsp.log.returns.forked$n_lags <- unlist(tuning.results.apsp.log.returns.forked$n_lags)
+tuning.results.apsp.log.returns.forked$ntree <- unlist(tuning.results.apsp.log.returns.forked$ntree)
+tuning.results.apsp.log.returns.forked$mtry <- unlist(tuning.results.apsp.log.returns.forked$mtry)
+tuning.results.apsp.log.returns.forked$mae <- unlist(tuning.results.apsp.log.returns.forked$mae)
+tuning.results.apsp.log.returns.forked$mape <- unlist(tuning.results.apsp.log.returns.forked$mape)
+
+
+save(tuning.results.apsp.log.returns.forked, file = "results/ml models/RF_APSP_log_returns_forked.RData")
+
+### Brent
+fork.params <- expand.grid("l" = 5:20, "ntree" = seq(1, 250, 1), "mtry" = 1:5)
+tuning_forked <- function(l, ntree, mtry){
+  res <- rf_tune(data_ts = ts.brent.monthly.log.returns, ntree = ntree, mtry = mtry, h = 12, n_lags = l)
+  print(paste0("Finished l: ", l, ", ntree: ", ntree, ", mtry: ", mtry))
+  return(data.frame("n_lags" = l, "ntree" = ntree, "mtry" = mtry, "mae" = res[[1]], "mape" = res[[2]]))
+}
+
+tuning.results.brent.log.returns.forked <- mcmapply(FUN = function(l, ntree, mtry){return(tuning_forked(l, ntree, mtry))}, l = fork.params$l, ntree = fork.params$ntree, mtry = fork.params$mtry)
+
+tuning.results.brent.log.returns.forked <- as.data.frame(t(tuning.results.brent.log.returns.forked))
+tuning.results.brent.log.returns.forked$n_lags <- unlist(tuning.results.brent.log.returns.forked$n_lags)
+tuning.results.brent.log.returns.forked$ntree <- unlist(tuning.results.brent.log.returns.forked$ntree)
+tuning.results.brent.log.returns.forked$mtry <- unlist(tuning.results.brent.log.returns.forked$mtry)
+tuning.results.brent.log.returns.forked$mae <- unlist(tuning.results.brent.log.returns.forked$mae)
+tuning.results.brent.log.returns.forked$mape <- unlist(tuning.results.brent.log.returns.forked$mape)
+
+
+save(tuning.results.brent.log.returns.forked, file = "results/ml models/RF_Brent_log_returns_forked.RData")
+
+### Dubai
+fork.params <- expand.grid("l" = 5:20, "ntree" = seq(1, 250, 1), "mtry" = 1:5)
+tuning_forked <- function(l, ntree, mtry){
+  res <- rf_tune(data_ts = ts.dubai.monthly.log.returns, ntree = ntree, mtry = mtry, h = 12, n_lags = l)
+  print(paste0("Finished l: ", l, ", ntree: ", ntree, ", mtry: ", mtry))
+  return(data.frame("n_lags" = l, "ntree" = ntree, "mtry" = mtry, "mae" = res[[1]], "mape" = res[[2]]))
+}
+
+tuning.results.dubai.log.returns.forked <- mcmapply(FUN = function(l, ntree, mtry){return(tuning_forked(l, ntree, mtry))}, l = fork.params$l, ntree = fork.params$ntree, mtry = fork.params$mtry)
+
+tuning.results.dubai.log.returns.forked <- as.data.frame(t(tuning.results.dubai.log.returns.forked))
+tuning.results.dubai.log.returns.forked$n_lags <- unlist(tuning.results.dubai.log.returns.forked$n_lags)
+tuning.results.dubai.log.returns.forked$ntree <- unlist(tuning.results.dubai.log.returns.forked$ntree)
+tuning.results.dubai.log.returns.forked$mtry <- unlist(tuning.results.dubai.log.returns.forked$mtry)
+tuning.results.dubai.log.returns.forked$mae <- unlist(tuning.results.dubai.log.returns.forked$mae)
+tuning.results.dubai.log.returns.forked$mape <- unlist(tuning.results.dubai.log.returns.forked$mape)
+
+
+save(tuning.results.dubai.log.returns.forked, file = "results/ml models/RF_Dubai_log_returns_forked.RData")
+
+### NatGas
+fork.params <- expand.grid("l" = 5:20, "ntree" = seq(1, 250, 1), "mtry" = 1:5)
+tuning_forked <- function(l, ntree, mtry){
+  res <- rf_tune(data_ts = ts.natgas.us.monthly.log.returns, ntree = ntree, mtry = mtry, h = 12, n_lags = l)
+  print(paste0("Finished l: ", l, ", ntree: ", ntree, ", mtry: ", mtry))
+  return(data.frame("n_lags" = l, "ntree" = ntree, "mtry" = mtry, "mae" = res[[1]], "mape" = res[[2]]))
+}
+
+tuning.results.natgas.us.log.returns.forked <- mcmapply(FUN = function(l, ntree, mtry){return(tuning_forked(l, ntree, mtry))}, l = fork.params$l, ntree = fork.params$ntree, mtry = fork.params$mtry)
+
+tuning.results.natgas.us.log.returns.forked <- as.data.frame(t(tuning.results.natgas.us.log.returns.forked))
+tuning.results.natgas.us.log.returns.forked$n_lags <- unlist(tuning.results.natgas.us.log.returns.forked$n_lags)
+tuning.results.natgas.us.log.returns.forked$ntree <- unlist(tuning.results.natgas.us.log.returns.forked$ntree)
+tuning.results.natgas.us.log.returns.forked$mtry <- unlist(tuning.results.natgas.us.log.returns.forked$mtry)
+tuning.results.natgas.us.log.returns.forked$mae <- unlist(tuning.results.natgas.us.log.returns.forked$mae)
+tuning.results.natgas.us.log.returns.forked$mape <- unlist(tuning.results.natgas.us.log.returns.forked$mape)
+
+
+save(tuning.results.natgas.us.log.returns.forked, file = "results/ml models/RF_NatGas_log_returns_forked.RData")
+
+### WTI
+fork.params <- expand.grid("l" = 5:20, "ntree" = seq(1, 250, 1), "mtry" = 1:5)
+tuning_forked <- function(l, ntree, mtry){
+  res <- rf_tune(data_ts = ts.wti.monthly.log.returns, ntree = ntree, mtry = mtry, h = 12, n_lags = l)
+  print(paste0("Finished l: ", l, ", ntree: ", ntree, ", mtry: ", mtry))
+  return(data.frame("n_lags" = l, "ntree" = ntree, "mtry" = mtry, "mae" = res[[1]], "mape" = res[[2]]))
+}
+
+tuning.results.wti.log.returns.forked <- mcmapply(FUN = function(l, ntree, mtry){return(tuning_forked(l, ntree, mtry))}, l = fork.params$l, ntree = fork.params$ntree, mtry = fork.params$mtry)
+
+tuning.results.wti.log.returns.forked <- as.data.frame(t(tuning.results.wti.log.returns.forked))
+tuning.results.wti.log.returns.forked$n_lags <- unlist(tuning.results.wti.log.returns.forked$n_lags)
+tuning.results.wti.log.returns.forked$ntree <- unlist(tuning.results.wti.log.returns.forked$ntree)
+tuning.results.wti.log.returns.forked$mtry <- unlist(tuning.results.wti.log.returns.forked$mtry)
+tuning.results.wti.log.returns.forked$mae <- unlist(tuning.results.wti.log.returns.forked$mae)
+tuning.results.wti.log.returns.forked$mape <- unlist(tuning.results.wti.log.returns.forked$mape)
+
+
+save(tuning.results.wti.log.returns.forked, file = "results/ml models/RF_WTI_log_returns_forked.RData")
