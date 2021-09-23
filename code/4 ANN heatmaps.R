@@ -3,11 +3,11 @@ rm(list = ls())
 library(tidyverse)
 library(viridis)
 
-load("results/ml models/APSP_log_returns_forked.RData")
-load("results/ml models/Brent_log_returns_forked.RData")
-load("results/ml models/Dubai_log_returns_forked.RData")
-load("results/ml models/NatGas_log_returns_forked.RData")
-load("results/ml models/WTI_log_returns_forked.RData")
+load("results/ml models/APSP_log_returns_forked_2.RData")
+load("results/ml models/Brent_log_returns_forked_2.RData")
+load("results/ml models/Dubai_log_returns_forked_2.RData")
+load("results/ml models/NatGas_log_returns_forked_2.RData")
+load("results/ml models/WTI_log_returns_forked_2.RData")
 
 
 ### APSP
@@ -24,7 +24,7 @@ apsp.plot.data$nodes_category[apsp.plot.data$n_nodes > 40 & apsp.plot.data$n_nod
 apsp.plot.data$nodes_category[apsp.plot.data$n_nodes > 50 & apsp.plot.data$n_nodes <= 60] <- "51-60"
 apsp.plot.data$hl_category <- paste(apsp.plot.data$n_hl, " layer(s), ", apsp.plot.data$nodes_category, " nodes")
 
-apsp.plot.data <- aggregate(mape ~ n_lags + hl_category, apsp.plot.data, mean)
+apsp.plot.data <- aggregate(mape ~ n_lags + hl_category, apsp.plot.data, median)
 apsp.plot.data$hl_category <- factor(apsp.plot.data$hl_category, levels = c("1  layer(s),  <5  nodes", "1  layer(s),  5-10  nodes", "1  layer(s),  11-20  nodes", "2  layer(s),  <5  nodes", "2  layer(s),  5-10  nodes",
                                                                             "2  layer(s),  11-20  nodes", "2  layer(s),  21-30  nodes", "2  layer(s),  31-40  nodes", "3  layer(s),  <5  nodes", "3  layer(s),  5-10  nodes",
                                                                             "3  layer(s),  11-20  nodes", "3  layer(s),  21-30  nodes", "3  layer(s),  31-40  nodes", "3  layer(s),  41-50  nodes", "3  layer(s),  51-60  nodes"))
@@ -62,7 +62,7 @@ brent.plot.data$nodes_category[brent.plot.data$n_nodes > 40 & brent.plot.data$n_
 brent.plot.data$nodes_category[brent.plot.data$n_nodes > 50 & brent.plot.data$n_nodes <= 60] <- "51-60"
 brent.plot.data$hl_category <- paste(brent.plot.data$n_hl, " layer(s), ", brent.plot.data$nodes_category, " nodes")
 
-brent.plot.data <- aggregate(mape ~ n_lags + hl_category, brent.plot.data, mean)
+brent.plot.data <- aggregate(mape ~ n_lags + hl_category, brent.plot.data, median)
 brent.plot.data$hl_category <- factor(brent.plot.data$hl_category, levels = c("1  layer(s),  <5  nodes", "1  layer(s),  5-10  nodes", "1  layer(s),  11-20  nodes", "2  layer(s),  <5  nodes", "2  layer(s),  5-10  nodes",
                                                                               "2  layer(s),  11-20  nodes", "2  layer(s),  21-30  nodes", "2  layer(s),  31-40  nodes", "3  layer(s),  <5  nodes", "3  layer(s),  5-10  nodes",
                                                                               "3  layer(s),  11-20  nodes", "3  layer(s),  21-30  nodes", "3  layer(s),  31-40  nodes", "3  layer(s),  41-50  nodes", "3  layer(s),  51-60  nodes"))
@@ -100,7 +100,7 @@ dubai.plot.data$nodes_category[dubai.plot.data$n_nodes > 40 & dubai.plot.data$n_
 dubai.plot.data$nodes_category[dubai.plot.data$n_nodes > 50 & dubai.plot.data$n_nodes <= 60] <- "51-60"
 dubai.plot.data$hl_category <- paste(dubai.plot.data$n_hl, " layer(s), ", dubai.plot.data$nodes_category, " nodes")
 
-dubai.plot.data <- aggregate(mape ~ n_lags + hl_category, dubai.plot.data, mean)
+dubai.plot.data <- aggregate(mape ~ n_lags + hl_category, dubai.plot.data, median)
 dubai.plot.data$hl_category <- factor(dubai.plot.data$hl_category, levels = c("1  layer(s),  <5  nodes", "1  layer(s),  5-10  nodes", "1  layer(s),  11-20  nodes", "2  layer(s),  <5  nodes", "2  layer(s),  5-10  nodes",
                                                                               "2  layer(s),  11-20  nodes", "2  layer(s),  21-30  nodes", "2  layer(s),  31-40  nodes", "3  layer(s),  <5  nodes", "3  layer(s),  5-10  nodes",
                                                                               "3  layer(s),  11-20  nodes", "3  layer(s),  21-30  nodes", "3  layer(s),  31-40  nodes", "3  layer(s),  41-50  nodes", "3  layer(s),  51-60  nodes"))
@@ -138,7 +138,7 @@ natgas.us.plot.data$nodes_category[natgas.us.plot.data$n_nodes > 40 & natgas.us.
 natgas.us.plot.data$nodes_category[natgas.us.plot.data$n_nodes > 50 & natgas.us.plot.data$n_nodes <= 60] <- "51-60"
 natgas.us.plot.data$hl_category <- paste(natgas.us.plot.data$n_hl, " layer(s), ", natgas.us.plot.data$nodes_category, " nodes")
 
-natgas.us.plot.data <- aggregate(mape ~ n_lags + hl_category, natgas.us.plot.data, mean)
+natgas.us.plot.data <- aggregate(mape ~ n_lags + hl_category, natgas.us.plot.data, median)
 natgas.us.plot.data$hl_category <- factor(natgas.us.plot.data$hl_category, levels = c("1  layer(s),  <5  nodes", "1  layer(s),  5-10  nodes", "1  layer(s),  11-20  nodes", "2  layer(s),  <5  nodes", "2  layer(s),  5-10  nodes",
                                                                                       "2  layer(s),  11-20  nodes", "2  layer(s),  21-30  nodes", "2  layer(s),  31-40  nodes", "3  layer(s),  <5  nodes", "3  layer(s),  5-10  nodes",
                                                                                       "3  layer(s),  11-20  nodes", "3  layer(s),  21-30  nodes", "3  layer(s),  31-40  nodes", "3  layer(s),  41-50  nodes", "3  layer(s),  51-60  nodes"))
@@ -176,7 +176,7 @@ wti.plot.data$nodes_category[wti.plot.data$n_nodes > 40 & wti.plot.data$n_nodes 
 wti.plot.data$nodes_category[wti.plot.data$n_nodes > 50 & wti.plot.data$n_nodes <= 60] <- "51-60"
 wti.plot.data$hl_category <- paste(wti.plot.data$n_hl, " layer(s), ", wti.plot.data$nodes_category, " nodes")
 
-wti.plot.data <- aggregate(mape ~ n_lags + hl_category, wti.plot.data, mean)
+wti.plot.data <- aggregate(mape ~ n_lags + hl_category, wti.plot.data, median)
 wti.plot.data$hl_category <- factor(wti.plot.data$hl_category, levels = c("1  layer(s),  <5  nodes", "1  layer(s),  5-10  nodes", "1  layer(s),  11-20  nodes", "2  layer(s),  <5  nodes", "2  layer(s),  5-10  nodes",
                                                                           "2  layer(s),  11-20  nodes", "2  layer(s),  21-30  nodes", "2  layer(s),  31-40  nodes", "3  layer(s),  <5  nodes", "3  layer(s),  5-10  nodes",
                                                                           "3  layer(s),  11-20  nodes", "3  layer(s),  21-30  nodes", "3  layer(s),  31-40  nodes", "3  layer(s),  41-50  nodes", "3  layer(s),  51-60  nodes"))
