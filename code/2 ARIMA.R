@@ -49,9 +49,9 @@ fit <- auto.arima(ts.train)
 arima.results$model[1] <- paste0("(", fit$arma[1], ", ", fit$arma[6], ", ", fit$arma[2], ")")
 
 # Evaluate
-pred <- forecast(fit, h = 12)$mean
-arima.results$mae[1] <- mae(ts.test, cumsum(c(ts.apsp.monthly.absolute[length(ts.apsp.monthly.absolute) - 12], pred))[-1])
-arima.results$mape[1] <- mape(ts.test, cumsum(c(ts.apsp.monthly.absolute[length(ts.apsp.monthly.absolute) - 12], pred))[-1])
+apsp.pred.diff <- cumsum(c(ts.apsp.monthly.absolute[length(ts.apsp.monthly.absolute) - 12], forecast(fit, h = 12)$mean))[-1]
+arima.results$mae[1] <- mae(ts.test, apsp.pred.diff)
+arima.results$mape[1] <- mape(ts.test, apsp.pred.diff)
 
 # Plot
 checkresiduals(fit)
@@ -67,9 +67,9 @@ fit <- auto.arima(ts.train)
 arima.results$model[6] <- paste0("(", fit$arma[1], ", ", fit$arma[6], ", ", fit$arma[2], ")")
 
 # Evaluate
-pred <- forecast(fit, h = 12)$mean
-arima.results$mae[6] <- mae(ts.test, ts.apsp.monthly.absolute[length(ts.apsp.monthly.absolute) - 12] * cumprod(exp(pred)))
-arima.results$mape[6] <- mape(ts.test, ts.apsp.monthly.absolute[length(ts.apsp.monthly.absolute) - 12] * cumprod(exp(pred)))
+apsp.pred.log.return <- ts.apsp.monthly.absolute[length(ts.apsp.monthly.absolute) - 12] * cumprod(exp(forecast(fit, h = 12)$mean))
+arima.results$mae[6] <- mae(ts.test, apsp.pred.log.return)
+arima.results$mape[6] <- mape(ts.test, apsp.pred.log.return)
 
 # Plot
 checkresiduals(fit)
@@ -92,9 +92,9 @@ fit <- auto.arima(ts.train)
 arima.results$model[2] <- paste0("(", fit$arma[1], ", ", fit$arma[6], ", ", fit$arma[2], ")")
 
 # Evaluate
-pred <- forecast(fit, h = 12)$mean
-arima.results$mae[2] <- mae(ts.test, cumsum(c(ts.brent.monthly.absolute[length(ts.brent.monthly.absolute) - 12], pred))[-1])
-arima.results$mape[2] <- mape(ts.test, cumsum(c(ts.brent.monthly.absolute[length(ts.brent.monthly.absolute) - 12], pred))[-1])
+brent.pred.diff <- cumsum(c(ts.brent.monthly.absolute[length(ts.brent.monthly.absolute) - 12], forecast(fit, h = 12)$mean))[-1]
+arima.results$mae[2] <- mae(ts.test, brent.pred.diff)
+arima.results$mape[2] <- mape(ts.test, brent.pred.diff)
 
 # Plot
 checkresiduals(fit)
@@ -110,9 +110,9 @@ fit <- auto.arima(ts.train)
 arima.results$model[7] <- paste0("(", fit$arma[1], ", ", fit$arma[6], ", ", fit$arma[2], ")")
 
 # Evaluate
-pred <- forecast(fit, h = 12)$mean
-arima.results$mae[7] <- mae(ts.test, ts.brent.monthly.absolute[length(ts.brent.monthly.absolute) - 12] * cumprod(exp(pred)))
-arima.results$mape[7] <- mape(ts.test, ts.brent.monthly.absolute[length(ts.brent.monthly.absolute) - 12] * cumprod(exp(pred)))
+brent.pred.log.return <- ts.brent.monthly.absolute[length(ts.brent.monthly.absolute) - 12] * cumprod(exp(forecast(fit, h = 12)$mean))
+arima.results$mae[7] <- mae(ts.test, brent.pred.log.return)
+arima.results$mape[7] <- mape(ts.test, brent.pred.log.return)
 
 # Plot
 checkresiduals(fit)
@@ -135,9 +135,9 @@ fit <- auto.arima(ts.train)
 arima.results$model[3] <- paste0("(", fit$arma[1], ", ", fit$arma[6], ", ", fit$arma[2], ")")
 
 # Evaluate
-pred <- forecast(fit, h = 12)$mean
-arima.results$mae[3] <- mae(ts.test, cumsum(c(ts.dubai.monthly.absolute[length(ts.dubai.monthly.absolute) - 12], pred))[-1])
-arima.results$mape[3] <- mape(ts.test, cumsum(c(ts.dubai.monthly.absolute[length(ts.dubai.monthly.absolute) - 12], pred))[-1])
+dubai.pred.diff <- cumsum(c(ts.dubai.monthly.absolute[length(ts.dubai.monthly.absolute) - 12], forecast(fit, h = 12)$mean))[-1]
+arima.results$mae[3] <- mae(ts.test, dubai.pred.diff)
+arima.results$mape[3] <- mape(ts.test, dubai.pred.diff)
 
 # Plot
 checkresiduals(fit)
@@ -153,9 +153,9 @@ fit <- auto.arima(ts.train)
 arima.results$model[8] <- paste0("(", fit$arma[1], ", ", fit$arma[6], ", ", fit$arma[2], ")")
 
 # Evaluate
-pred <- forecast(fit, h = 12)$mean
-arima.results$mae[8] <- mae(ts.test, ts.dubai.monthly.absolute[length(ts.dubai.monthly.absolute) - 12] * cumprod(exp(pred)))
-arima.results$mape[8] <- mape(ts.test, ts.dubai.monthly.absolute[length(ts.dubai.monthly.absolute) - 12] * cumprod(exp(pred)))
+dubai.pred.log.return <- ts.dubai.monthly.absolute[length(ts.dubai.monthly.absolute) - 12] * cumprod(exp(forecast(fit, h = 12)$mean))
+arima.results$mae[8] <- mae(ts.test, dubai.pred.log.return)
+arima.results$mape[8] <- mape(ts.test, dubai.pred.log.return)
 
 # Plot
 checkresiduals(fit)
@@ -178,9 +178,9 @@ fit <- auto.arima(ts.train)
 arima.results$model[4] <- paste0("(", fit$arma[1], ", ", fit$arma[6], ", ", fit$arma[2], ")")
 
 # Evaluate
-pred <- forecast(fit, h = 12)$mean
-arima.results$mae[4] <- mae(ts.test, cumsum(c(ts.natgas.us.monthly.absolute[length(ts.natgas.us.monthly.absolute) - 12], pred))[-1])
-arima.results$mape[4] <- mape(ts.test, cumsum(c(ts.natgas.us.monthly.absolute[length(ts.natgas.us.monthly.absolute) - 12], pred))[-1])
+natgas.us.pred.diff <- cumsum(c(ts.natgas.us.monthly.absolute[length(ts.natgas.us.monthly.absolute) - 12], forecast(fit, h = 12)$mean))[-1]
+arima.results$mae[4] <- mae(ts.test, natgas.us.pred.diff)
+arima.results$mape[4] <- mape(ts.test, natgas.us.pred.diff)
 
 # Plot
 checkresiduals(fit)
@@ -196,9 +196,9 @@ fit <- auto.arima(ts.train)
 arima.results$model[9] <- paste0("(", fit$arma[1], ", ", fit$arma[6], ", ", fit$arma[2], ")")
 
 # Evaluate
-pred <- forecast(fit, h = 12)$mean
-arima.results$mae[9] <- mae(ts.test, ts.natgas.us.monthly.absolute[length(ts.natgas.us.monthly.absolute) - 12] * cumprod(exp(pred)))
-arima.results$mape[9] <- mape(ts.test, ts.natgas.us.monthly.absolute[length(ts.natgas.us.monthly.absolute) - 12] * cumprod(exp(pred)))
+natgas.us.pred.log.return <- ts.natgas.us.monthly.absolute[length(ts.natgas.us.monthly.absolute) - 12] * cumprod(exp(forecast(fit, h = 12)$mean))
+arima.results$mae[9] <- mae(ts.test, natgas.us.pred.log.return)
+arima.results$mape[9] <- mape(ts.test, natgas.us.pred.log.return)
 
 # Plot
 checkresiduals(fit)
@@ -221,9 +221,9 @@ fit <- auto.arima(ts.train)
 arima.results$model[5] <- paste0("(", fit$arma[1], ", ", fit$arma[6], ", ", fit$arma[2], ")")
 
 # Evaluate
-pred <- forecast(fit, h = 12)$mean
-arima.results$mae[5] <- mae(ts.test, cumsum(c(ts.wti.monthly.absolute[length(ts.wti.monthly.absolute) - 12], pred))[-1])
-arima.results$mape[5] <- mape(ts.test, cumsum(c(ts.wti.monthly.absolute[length(ts.wti.monthly.absolute) - 12], pred))[-1])
+wti.pred.diff <- cumsum(c(ts.wti.monthly.absolute[length(ts.wti.monthly.absolute) - 12], forecast(fit, h = 12)$mean))[-1]
+arima.results$mae[5] <- mae(ts.test, wti.pred.diff)
+arima.results$mape[5] <- mape(ts.test, wti.pred.diff)
 
 # Plot
 checkresiduals(fit)
@@ -239,9 +239,9 @@ fit <- auto.arima(ts.train)
 arima.results$model[10] <- paste0("(", fit$arma[1], ", ", fit$arma[6], ", ", fit$arma[2], ")")
 
 # Evaluate
-pred <- forecast(fit, h = 12)$mean
-arima.results$mae[10] <- mae(ts.test, ts.wti.monthly.absolute[length(ts.wti.monthly.absolute) - 12] * cumprod(exp(pred)))
-arima.results$mape[10] <- mape(ts.test, ts.wti.monthly.absolute[length(ts.wti.monthly.absolute) - 12] * cumprod(exp(pred)))
+wti.pred.log.return <- ts.wti.monthly.absolute[length(ts.wti.monthly.absolute) - 12] * cumprod(exp(forecast(fit, h = 12)$mean))
+arima.results$mae[10] <- mae(ts.test, wti.pred.log.return)
+arima.results$mape[10] <- mape(ts.test, wti.pred.log.return)
 
 # Plot
 checkresiduals(fit)
@@ -250,3 +250,10 @@ autoplot(forecast(fit, h = 12))
 
 ### Save the results
 save(arima.results, file = "results/econometric models/ARIMA.RData")
+
+arima.pred <- data.frame("apsp.diff" = apsp.pred.diff, "apsp.log.return" = apsp.pred.log.return,
+                         "brent.diff" = brent.pred.diff, "brent.log.return" = brent.pred.log.return,
+                         "dubai.diff" = dubai.pred.diff, "dubai.log.return" = dubai.pred.log.return,
+                         "natgas.us.diff" = natgas.us.pred.diff, "natgas.us.log.return" = natgas.us.pred.log.return,
+                         "wti.diff" = wti.pred.diff, "wti.log.return" = wti.pred.log.return)
+save(arima.pred, file = "results/econometric models/ARIMA pred.RData")
