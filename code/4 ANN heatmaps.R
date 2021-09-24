@@ -32,7 +32,7 @@ apsp.plot.data$hl_category <- factor(apsp.plot.data$hl_category, levels = c("1  
 # Plot
 apsp.mape.heatmap <- ggplot(data = apsp.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
   geom_tile() +
-  scale_fill_viridis(name = "MAPE", option = "magma", discrete = FALSE, direction = -1) +
+  scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
   labs(title = "ANN error heatmap", subtitle = "APSP log returns", x = "hidden layer configuration", y = "nr. of lags used") +
   theme_bw() +
   theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
@@ -45,7 +45,7 @@ apsp.mape.heatmap <- ggplot(data = apsp.plot.data, aes(x = hl_category, y = n_la
 
 apsp.mape.heatmap
 
-ggsave(filename = "plots/3 APSP error heatmap.pdf", plot = apsp.mape.heatmap, device = cairo_pdf)
+ggsave(filename = "plots/3 ANN APSP error heatmap.pdf", plot = apsp.mape.heatmap, device = cairo_pdf)
 
 
 ### Brent
@@ -70,7 +70,7 @@ brent.plot.data$hl_category <- factor(brent.plot.data$hl_category, levels = c("1
 # Plot
 brent.mape.heatmap <- ggplot(data = brent.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
   geom_tile() +
-  scale_fill_viridis(name = "MAPE", option = "magma", discrete = FALSE, direction = -1) +
+  scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
   labs(title = "ANN error heatmap", subtitle = "Brent log returns", x = "hidden layer configuration", y = "nr. of lags used") +
   theme_bw() +
   theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
@@ -83,7 +83,7 @@ brent.mape.heatmap <- ggplot(data = brent.plot.data, aes(x = hl_category, y = n_
 
 brent.mape.heatmap
 
-ggsave(filename = "plots/3 Brent error heatmap.pdf", plot = brent.mape.heatmap, device = cairo_pdf)
+ggsave(filename = "plots/3 ANN Brent error heatmap.pdf", plot = brent.mape.heatmap, device = cairo_pdf)
 
 
 ### Dubai
@@ -108,7 +108,7 @@ dubai.plot.data$hl_category <- factor(dubai.plot.data$hl_category, levels = c("1
 # Plot
 dubai.mape.heatmap <- ggplot(data = dubai.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
   geom_tile() +
-  scale_fill_viridis(name = "MAPE", option = "magma", discrete = FALSE, direction = -1) +
+  scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
   labs(title = "ANN error heatmap", subtitle = "Dubai Fateh log returns", x = "hidden layer configuration", y = "nr. of lags used") +
   theme_bw() +
   theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
@@ -121,7 +121,7 @@ dubai.mape.heatmap <- ggplot(data = dubai.plot.data, aes(x = hl_category, y = n_
 
 dubai.mape.heatmap
 
-ggsave(filename = "plots/3 Dubai error heatmap.pdf", plot = dubai.mape.heatmap, device = cairo_pdf)
+ggsave(filename = "plots/3 ANN Dubai error heatmap.pdf", plot = dubai.mape.heatmap, device = cairo_pdf)
 
 
 ### NatGas
@@ -146,7 +146,7 @@ natgas.us.plot.data$hl_category <- factor(natgas.us.plot.data$hl_category, level
 # Plot
 natgas.us.mape.heatmap <- ggplot(data = natgas.us.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
   geom_tile() +
-  scale_fill_viridis(name = "MAPE", option = "magma", discrete = FALSE, direction = -1) +
+  scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
   labs(title = "ANN error heatmap", subtitle = "NatGas US log returns", x = "hidden layer configuration", y = "nr. of lags used") +
   theme_bw() +
   theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
@@ -159,7 +159,7 @@ natgas.us.mape.heatmap <- ggplot(data = natgas.us.plot.data, aes(x = hl_category
 
 natgas.us.mape.heatmap
 
-ggsave(filename = "plots/3 NatGas error heatmap.pdf", plot = natgas.us.mape.heatmap, device = cairo_pdf)
+ggsave(filename = "plots/3 ANN NatGas error heatmap.pdf", plot = natgas.us.mape.heatmap, device = cairo_pdf)
 
 
 ### WTI
@@ -184,7 +184,7 @@ wti.plot.data$hl_category <- factor(wti.plot.data$hl_category, levels = c("1  la
 # Plot
 wti.mape.heatmap <- ggplot(data = wti.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
   geom_tile() +
-  scale_fill_viridis(name = "MAPE", option = "magma", discrete = FALSE, direction = -1) +
+  scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
   labs(title = "ANN error heatmap", subtitle = "WTI log returns", x = "hidden layer configuration", y = "nr. of lags used") +
   theme_bw() +
   theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
@@ -197,4 +197,4 @@ wti.mape.heatmap <- ggplot(data = wti.plot.data, aes(x = hl_category, y = n_lags
 
 wti.mape.heatmap
 
-ggsave(filename = "plots/3 WTI error heatmap.pdf", plot = wti.mape.heatmap, device = cairo_pdf)
+ggsave(filename = "plots/3 ANN WTI error heatmap.pdf", plot = wti.mape.heatmap, device = cairo_pdf)
