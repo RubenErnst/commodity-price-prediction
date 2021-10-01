@@ -2,6 +2,7 @@ rm(list = ls())
 
 library(tidyverse)
 library(viridis)
+library(ggpubr)
 
 load("results/ml models/APSP_log_returns_forked_2.RData")
 load("results/ml models/Brent_log_returns_forked_2.RData")
@@ -198,3 +199,83 @@ wti.mape.heatmap <- ggplot(data = wti.plot.data, aes(x = hl_category, y = n_lags
 wti.mape.heatmap
 
 ggsave(filename = "plots/3 ANN WTI error heatmap.pdf", plot = wti.mape.heatmap, device = cairo_pdf)
+
+
+### Combine the plots to include in the paper ----
+## APSP
+apsp.mape.heatmap <- ggplot(data = apsp.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
+  geom_tile() +
+  scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
+  labs(title = "APSP", x = "hidden layer configuration", y = "nr. of lags used") +
+  theme_bw() +
+  theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
+        axis.line = element_blank(),
+        panel.border = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid = element_blank(),
+        plot.background = element_blank(),
+        plot.margin = unit(c(0.1, 0, 0.2, 0.5), "in"))
+
+## Brent
+brent.mape.heatmap <- ggplot(data = brent.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
+  geom_tile() +
+  scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
+  labs(title = "Brent", x = "hidden layer configuration", y = "nr. of lags used") +
+  theme_bw() +
+  theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
+        axis.line = element_blank(),
+        panel.border = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid = element_blank(),
+        plot.background = element_blank(),
+        plot.margin = unit(c(0.1, 0, 0.2, 0.5), "in"))
+
+## Dubai
+dubai.mape.heatmap <- ggplot(data = dubai.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
+  geom_tile() +
+  scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
+  labs(title = "Dubai", x = "hidden layer configuration", y = "nr. of lags used") +
+  theme_bw() +
+  theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
+        axis.line = element_blank(),
+        panel.border = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid = element_blank(),
+        plot.background = element_blank(),
+        plot.margin = unit(c(0.1, 0, 0.2, 0.5), "in"))
+
+## NatGas
+natgas.us.mape.heatmap <- ggplot(data = natgas.us.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
+  geom_tile() +
+  scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
+  labs(title = "NatGas Henry Hub", x = "hidden layer configuration", y = "nr. of lags used") +
+  theme_bw() +
+  theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
+        axis.line = element_blank(),
+        panel.border = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid = element_blank(),
+        plot.background = element_blank(),
+        plot.margin = unit(c(0.1, 0, 0.2, 0.5), "in"))
+
+## WTI
+wti.mape.heatmap <- ggplot(data = wti.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
+  geom_tile() +
+  scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
+  labs(title = "WTI", x = "hidden layer configuration", y = "nr. of lags used") +
+  theme_bw() +
+  theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
+        axis.line = element_blank(),
+        panel.border = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid = element_blank(),
+        plot.background = element_blank(),
+        plot.margin = unit(c(0.1, 0, 0.2, 0.5), "in"))
+
+
+ann.heatmaps <- ggarrange(apsp.mape.heatmap, brent.mape.heatmap, dubai.mape.heatmap, natgas.us.mape.heatmap, wti.mape.heatmap,
+                          ncol = 2, nrow = 3)
+
+ann.heatmaps
+
+ggsave(filename = "plots/3 ANN combined error heatmaps.pdf", plot = ann.heatmaps, device = cairo_pdf, width = 9, height = 14)
