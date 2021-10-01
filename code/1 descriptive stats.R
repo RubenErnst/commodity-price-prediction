@@ -224,6 +224,75 @@ wti.desc$commodity <- "WTI"
 # Save results
 descriptives <- rbind(apsp.desc, brent.desc, dubai.desc, natgas.us.desc, wti.desc)
 save(descriptives, file = "results/descriptive stats/Descriptives.RData")
+openxlsx::write.xlsx(descriptives, file = "results/descriptive stats/Descriptives.xlsx")
+
+
+
+### Short version (without yearly resolution) ----
+### APSP
+# Assemble table of descriptive stats
+descriptives.short <- rbind(data.frame("price" = ts.apsp.monthly.absolute[1:length(ts.apsp.monthly.absolute)],
+                                       "year" = lubridate::year(zoo::yearmon(time(ts.apsp.monthly.absolute))),
+                                       "month" = lubridate::month(zoo::yearmon(time(ts.apsp.monthly.absolute))),
+                                       "commodity" = "APSP"),
+                            data.frame("price" = ts.brent.monthly.absolute[1:length(ts.brent.monthly.absolute)],
+                                       "year" = lubridate::year(zoo::yearmon(time(ts.brent.monthly.absolute))),
+                                       "month" = lubridate::month(zoo::yearmon(time(ts.brent.monthly.absolute))),
+                                       "commodity" = "Brent"),
+                            data.frame("price" = ts.dubai.monthly.absolute[1:length(ts.dubai.monthly.absolute)],
+                                       "year" = lubridate::year(zoo::yearmon(time(ts.dubai.monthly.absolute))),
+                                       "month" = lubridate::month(zoo::yearmon(time(ts.dubai.monthly.absolute))),
+                                       "commodity" = "Dubai"),
+                            data.frame("price" = ts.natgas.us.monthly.absolute[1:length(ts.natgas.us.monthly.absolute)],
+                                       "year" = lubridate::year(zoo::yearmon(time(ts.natgas.us.monthly.absolute))),
+                                       "month" = lubridate::month(zoo::yearmon(time(ts.natgas.us.monthly.absolute))),
+                                       "commodity" = "NatGas"),
+                            data.frame("price" = ts.wti.monthly.absolute[1:length(ts.wti.monthly.absolute)],
+                                       "year" = lubridate::year(zoo::yearmon(time(ts.wti.monthly.absolute))),
+                                       "month" = lubridate::month(zoo::yearmon(time(ts.wti.monthly.absolute))),
+                                       "commodity" = "WTI"))
+
+descriptives.short <- merge(select(aggregate(price ~ commodity, descriptives.short, quantile, 0), "quantile.0" = price, commodity),
+                   select(aggregate(price ~ commodity, descriptives.short, quantile, 0.25), "quantile.25" = price, commodity),
+                   by = "commodity", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ commodity, descriptives.short, quantile, 0.5),
+                  "quantile.50" = price, commodity),
+        by = "commodity", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ commodity, descriptives.short, quantile, 0.75),
+                  "quantile.75" = price, commodity),
+        by = "commodity", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ commodity, descriptives.short, quantile, 1),
+                  "quantile.100" = price, commodity),
+        by = "commodity", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ commodity, descriptives.short, mean),
+                  "mean" = price, commodity),
+        by = "commodity", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ commodity, descriptives.short, median),
+                  "median" = price, commodity),
+        by = "commodity", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ commodity, descriptives.short, function(x){unique(x)[which.max(tabulate(match(x, unique(x))))]}),
+                  "mode" = price, commodity),
+        by = "commodity", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ commodity, descriptives.short, var),
+                  "variance" = price, commodity),
+        by = "commodity", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ commodity, descriptives.short, sd),
+                  "sd" = price, commodity),
+        by = "commodity", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ commodity, descriptives.short, skewness),
+                  "skewness" = price, commodity),
+        by = "commodity", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ commodity, descriptives.short, kurtosis),
+                  "kurtosis" = price, commodity),
+        by = "commodity", all.x = TRUE)
+
+
+
+# Save results
+save(descriptives.short, file = "results/descriptive stats/Descriptives_short.RData")
+openxlsx::write.xlsx(descriptives.short, file = "results/descriptive stats/Descriptives_short.xlsx")
+
+
 
 
 ##### Graphs ----
@@ -253,7 +322,7 @@ dispersion.plot <- ggplot(data = boxplot.data, aes(x = year, y = price)) +
   theme(panel.grid = element_blank(),
         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
   facet_wrap( ~ commodity, scales = "free",
-             labeller = as_labeller(c("APSP" = "APSP", "Brent" = "Brent", "Dubai" = "Dubai", "NatGas" = "NatGas Henry Hub", "WTI" = "WTI")))
+              labeller = as_labeller(c("APSP" = "APSP", "Brent" = "Brent", "Dubai" = "Dubai", "NatGas" = "Natural Gas Henry Hub", "WTI" = "WTI")))
 
 dispersion.plot
 
