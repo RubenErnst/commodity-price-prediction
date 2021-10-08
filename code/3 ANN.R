@@ -1098,6 +1098,13 @@ save(tuning.results.wti.log.returns.forked, file = "results/ml models/WTI_log_re
 
 
 ### Save predictions of best configurations -----
+load("results/ml models/APSP_log_returns_forked_2.RData")
+load("results/ml models/Brent_log_returns_forked_2.RData")
+load("results/ml models/Dubai_log_returns_forked_2.RData")
+load("results/ml models/NatGas_log_returns_forked_2.RData")
+load("results/ml models/WTI_log_returns_forked_2.RData")
+
+
 n_lags <- tuning.results.apsp.log.returns.forked$n_lags[which.min(tuning.results.apsp.log.returns.forked$mape)]
 hidden_layers <- as.integer(unlist(str_split(as.character(tuning.results.apsp.log.returns.forked$hidden_config[which.min(tuning.results.apsp.log.returns.forked$mape)]), ", ")))
 lagged <- data.frame("y" = log(ts.apsp.monthly.absolute[1:length(ts.apsp.monthly.absolute)] / lag(ts.apsp.monthly.absolute[1:length(ts.apsp.monthly.absolute)]))[-1])
@@ -1108,6 +1115,7 @@ for (i in 1:n_lags){
 set.seed(42)
 eval(parse(text = paste0("ann <- neuralnet(formula = y ~ ", paste(names(lagged)[-1], collapse = " + "), ", data = lagged[", n_lags + 1, ":(nrow(lagged) - ", n_lags, "),], hidden = ", paste0("c(", paste(hidden_layers, collapse = ", "), ")"), ", threshold = 0.01)")))
 apsp.pred.log.return <- ts.apsp.monthly.absolute[(nrow(lagged) - 12 + 1)] * cumprod(exp(ann_recursive_pred(model = ann, h = 12, lagged.data = lagged[(nrow(lagged) - 12 + 1), -1])))
+best.ann.apsp <- ann
 
 
 n_lags <- tuning.results.brent.log.returns.forked$n_lags[which.min(tuning.results.brent.log.returns.forked$mape)]
@@ -1120,6 +1128,7 @@ for (i in 1:n_lags){
 set.seed(42)
 eval(parse(text = paste0("ann <- neuralnet(formula = y ~ ", paste(names(lagged)[-1], collapse = " + "), ", data = lagged[", n_lags + 1, ":(nrow(lagged) - ", n_lags, "),], hidden = ", paste0("c(", paste(hidden_layers, collapse = ", "), ")"), ", threshold = 0.01)")))
 brent.pred.log.return <- ts.brent.monthly.absolute[(nrow(lagged) - 12 + 1)] * cumprod(exp(ann_recursive_pred(model = ann, h = 12, lagged.data = lagged[(nrow(lagged) - 12 + 1), -1])))
+best.ann.brent <- ann
 
 
 n_lags <- tuning.results.dubai.log.returns.forked$n_lags[which.min(tuning.results.dubai.log.returns.forked$mape)]
@@ -1132,6 +1141,7 @@ for (i in 1:n_lags){
 set.seed(42)
 eval(parse(text = paste0("ann <- neuralnet(formula = y ~ ", paste(names(lagged)[-1], collapse = " + "), ", data = lagged[", n_lags + 1, ":(nrow(lagged) - ", n_lags, "),], hidden = ", paste0("c(", paste(hidden_layers, collapse = ", "), ")"), ", threshold = 0.01)")))
 dubai.pred.log.return <- ts.dubai.monthly.absolute[(nrow(lagged) - 12 + 1)] * cumprod(exp(ann_recursive_pred(model = ann, h = 12, lagged.data = lagged[(nrow(lagged) - 12 + 1), -1])))
+best.ann.dubai <- ann
 
 
 n_lags <- tuning.results.natgas.us.log.returns.forked$n_lags[which.min(tuning.results.natgas.us.log.returns.forked$mape)]
@@ -1144,6 +1154,7 @@ for (i in 1:n_lags){
 set.seed(42)
 eval(parse(text = paste0("ann <- neuralnet(formula = y ~ ", paste(names(lagged)[-1], collapse = " + "), ", data = lagged[", n_lags + 1, ":(nrow(lagged) - ", n_lags, "),], hidden = ", paste0("c(", paste(hidden_layers, collapse = ", "), ")"), ", threshold = 0.01)")))
 natgas.us.pred.log.return <- ts.natgas.us.monthly.absolute[(nrow(lagged) - 12 + 1)] * cumprod(exp(ann_recursive_pred(model = ann, h = 12, lagged.data = lagged[(nrow(lagged) - 12 + 1), -1])))
+best.ann.natgas.us <- ann
 
 
 n_lags <- tuning.results.wti.log.returns.forked$n_lags[which.min(tuning.results.wti.log.returns.forked$mape)]
@@ -1156,6 +1167,7 @@ for (i in 1:n_lags){
 set.seed(42)
 eval(parse(text = paste0("ann <- neuralnet(formula = y ~ ", paste(names(lagged)[-1], collapse = " + "), ", data = lagged[", n_lags + 1, ":(nrow(lagged) - ", n_lags, "),], hidden = ", paste0("c(", paste(hidden_layers, collapse = ", "), ")"), ", threshold = 0.01)")))
 wti.pred.log.return <- ts.wti.monthly.absolute[(nrow(lagged) - 12 + 1)] * cumprod(exp(ann_recursive_pred(model = ann, h = 12, lagged.data = lagged[(nrow(lagged) - 12 + 1), -1])))
+best.ann.wti <- ann
 
 
 ann.pred <- data.frame("apsp.log.return" = apsp.pred.log.return,
@@ -1163,4 +1175,5 @@ ann.pred <- data.frame("apsp.log.return" = apsp.pred.log.return,
                        "dubai.log.return" = dubai.pred.log.return,
                        "natgas.us.log.return" = natgas.us.pred.log.return,
                        "wti.log.return" = wti.pred.log.return)
-save(ann.pred, file = "results/ml models/ANN pred.RData")
+
+save(ann.pred, best.ann.apsp, best.ann.brent, best.ann.dubai, best.ann.natgas.us, best.ann.wti, file = "results/ml models/ANN pred.RData")
