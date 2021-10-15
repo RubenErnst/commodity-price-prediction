@@ -4,6 +4,7 @@ library(tidyverse)
 library(forecast)
 library(ggforce)
 library(viridis)
+library(ggpubr)
 
 
 load("clean data/timeseries.RData")
@@ -33,16 +34,17 @@ apsp.plot.data$series <- factor(apsp.plot.data$series, levels = c("price", "no.c
 # Plot
 apsp.fit.plot <- ggplot(data = apsp.plot.data, aes(x = time, y = value, color = series)) +
   geom_line() +
-  scale_color_manual(values = c("black", "red", "orange", "green", "blue", "purple"), name = "Series", labels = c("price", "no change", "SES", "ARIMA", "ANN", "RF")) +
-  labs(title = "12 month ahead prediction", subtitle = "APSP log returns", x = "Time", y = "USD/bbl") +
+  scale_color_manual(values = c("black", "red", "orange", "green", "blue", "purple"), name = "Series", labels = c("price", "no change", "SES", "ARIMA", "ANN", "RF"), guide = FALSE) +
+  labs(title = "APSP", x = "Time", y = "USD/bbl") +
   facet_zoom(x = series == "price", xlim = c(2019, 2021), ylim = c(20, 70), zoom.size = 1) +
   theme_bw() +
-  theme(panel.grid = element_blank())
+  theme(panel.grid = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5), legend.background = element_blank())
 
 apsp.fit.plot
 
 # Save the plot
-ggsave(filename = "plots/4 APSP fit plot.pdf", plot = apsp.fit.plot, device = cairo_pdf, width = 12, height = 7)
+# ggsave(filename = "plots/4 APSP fit plot.pdf", plot = apsp.fit.plot, device = cairo_pdf, width = 12, height = 7)
 
 
 ### Brent
@@ -64,16 +66,17 @@ brent.plot.data$series <- factor(brent.plot.data$series, levels = c("price", "no
 # Plot
 brent.fit.plot <- ggplot(data = brent.plot.data, aes(x = time, y = value, color = series)) +
   geom_line() +
-  scale_color_manual(values = c("black", "red", "orange", "green", "blue", "purple"), name = "Series", labels = c("price", "no change", "SES", "ARIMA", "ANN", "RF")) +
-  labs(title = "12 month ahead prediction", subtitle = "Brent log returns", x = "Time", y = "USD/bbl") +
+  scale_color_manual(values = c("black", "red", "orange", "green", "blue", "purple"), name = "Series", labels = c("price", "no change", "SES", "ARIMA", "ANN", "RF"), guide = FALSE) +
+  labs(title = "Brent", x = "Time", y = "USD/bbl") +
   facet_zoom(x = series == "price", xlim = c(2019, 2021), ylim = c(20, 70), zoom.size = 1) +
   theme_bw() +
-  theme(panel.grid = element_blank())
+  theme(panel.grid = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
 
 brent.fit.plot
 
 # Save the plot
-ggsave(filename = "plots/4 Brent fit plot.pdf", plot = brent.fit.plot, device = cairo_pdf, width = 12, height = 7)
+# ggsave(filename = "plots/4 Brent fit plot.pdf", plot = brent.fit.plot, device = cairo_pdf, width = 12, height = 7)
 
 
 ### Dubai
@@ -95,16 +98,17 @@ dubai.plot.data$series <- factor(dubai.plot.data$series, levels = c("price", "no
 # Plot
 dubai.fit.plot <- ggplot(data = dubai.plot.data, aes(x = time, y = value, color = series)) +
   geom_line() +
-  scale_color_manual(values = c("black", "red", "orange", "green", "blue", "purple"), name = "Series", labels = c("price", "no change", "SES", "ARIMA", "ANN", "RF")) +
-  labs(title = "12 month ahead prediction", subtitle = "Dubai log returns", x = "Time", y = "USD/bbl") +
+  scale_color_manual(values = c("black", "red", "orange", "green", "blue", "purple"), name = "Series", labels = c("price", "no change", "SES", "ARIMA", "ANN", "RF"), guide = FALSE) +
+  labs(title = "Dubai Fateh", x = "Time", y = "USD/bbl") +
   facet_zoom(x = series == "price", xlim = c(2019, 2021), ylim = c(20, 70), zoom.size = 1) +
   theme_bw() +
-  theme(panel.grid = element_blank())
+  theme(panel.grid = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
 
 dubai.fit.plot
 
 # Save the plot
-ggsave(filename = "plots/4 Dubai fit plot.pdf", plot = dubai.fit.plot, device = cairo_pdf, width = 12, height = 7)
+# ggsave(filename = "plots/4 Dubai fit plot.pdf", plot = dubai.fit.plot, device = cairo_pdf, width = 12, height = 7)
 
 
 ### NatGas
@@ -126,16 +130,17 @@ natgas.us.plot.data$series <- factor(natgas.us.plot.data$series, levels = c("pri
 # Plot
 natgas.us.fit.plot <- ggplot(data = natgas.us.plot.data, aes(x = time, y = value, color = series)) +
   geom_line() +
-  scale_color_manual(values = c("black", "red", "orange", "green", "blue", "purple"), name = "Series", labels = c("price", "no change", "SES", "ARIMA", "ANN", "RF")) +
-  labs(title = "12 month ahead prediction", subtitle = "US NatGas log returns", x = "Time", y = "USD/mmBtu") +
-  facet_zoom(x = series == "price", xlim = c(2019, 2021), ylim = c(20, 70), zoom.size = 1) +
+  scale_color_manual(values = c("black", "red", "orange", "green", "blue", "purple"), name = "Series", labels = c("price", "no change", "SES", "ARIMA", "ANN", "RF"), guide = FALSE) +
+  labs(title = "Natural Gas Henry Hub", x = "Time", y = "USD/mmBtu") +
+  facet_zoom(x = series == "price", xlim = c(2019, 2021), ylim = c(0, 6), zoom.size = 1) +
   theme_bw() +
-  theme(panel.grid = element_blank())
+  theme(panel.grid = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
 
 natgas.us.fit.plot
 
 # Save the plot
-ggsave(filename = "plots/4 NatGas fit plot.pdf", plot = natgas.us.fit.plot, device = cairo_pdf, width = 12, height = 7)
+# ggsave(filename = "plots/4 NatGas fit plot.pdf", plot = natgas.us.fit.plot, device = cairo_pdf, width = 12, height = 7)
 
 
 ### WTI
@@ -158,12 +163,22 @@ wti.plot.data$series <- factor(wti.plot.data$series, levels = c("price", "no.cha
 wti.fit.plot <- ggplot(data = wti.plot.data, aes(x = time, y = value, color = series)) +
   geom_line() +
   scale_color_manual(values = c("black", "red", "orange", "green", "blue", "purple"), name = "Series", labels = c("price", "no change", "SES", "ARIMA", "ANN", "RF")) +
-  labs(title = "12 month ahead prediction", subtitle = "WTI log returns", x = "Time", y = "USD/bbl") +
-  facet_zoom(x = series == "price", xlim = c(2019, 2021), ylim = c(20, 70), zoom.size = 1) +
+  labs(title = "WTI", x = "Time", y = "USD/bbl") +
+  facet_zoom(x = series == "price", xlim = c(2019, 2021), ylim = c(15, 70), zoom.size = 1) +
   theme_bw() +
-  theme(panel.grid = element_blank())
+  theme(panel.grid = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5), legend.position = c(1.2,0.5))
 
 wti.fit.plot
 
 # Save the plot
-ggsave(filename = "plots/4 WTI fit plot.pdf", plot = wti.fit.plot, device = cairo_pdf, width = 12, height = 7)
+# ggsave(filename = "plots/4 WTI fit plot.pdf", plot = wti.fit.plot, device = cairo_pdf, width = 12, height = 7)
+
+
+### Clustered version
+fit.plots <- ggarrange(apsp.fit.plot, brent.fit.plot, dubai.fit.plot, natgas.us.fit.plot, wti.fit.plot,
+                       ncol = 2, nrow = 3)
+
+fit.plots
+
+ggsave(filename = "plots/4 All fit plots.pdf", plot = fit.plots, device = cairo_pdf, width = 12, height = 12)
