@@ -2,6 +2,7 @@ rm(list = ls())
 
 library(tidyverse)
 library(viridis)
+library(ggpubr)
 
 load("results/ml models/RF_APSP_log_returns_forked.RData")
 load("results/ml models/RF_Brent_log_returns_forked.RData")
@@ -31,7 +32,7 @@ apsp.plot.data$config <- factor(apsp.plot.data$config, levels = c("1-50  trees, 
 apsp.mape.heatmap <- ggplot(data = apsp.plot.data, aes(x = config, y = n_lags, fill = mape)) + 
   geom_tile() +
   scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
-  labs(title = "RF error heatmap", subtitle = "APSP log returns", x = "hyperparameter configuration", y = "nr. of lags used") +
+  labs(title = "APSP", x = "hyperparameter configuration", y = "nr. of lags used") +
   theme_bw() +
   theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
         axis.line = element_blank(),
@@ -39,11 +40,11 @@ apsp.mape.heatmap <- ggplot(data = apsp.plot.data, aes(x = config, y = n_lags, f
         axis.ticks = element_blank(),
         panel.grid = element_blank(),
         plot.background = element_blank(),
-        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "in"))
+        plot.margin = unit(c(0, 0, 0, 0.5), "in"))
 
 apsp.mape.heatmap
 
-ggsave(filename = "plots/3 RF APSP error heatmap.pdf", plot = apsp.mape.heatmap, device = cairo_pdf)
+# ggsave(filename = "plots/3 RF APSP error heatmap.pdf", plot = apsp.mape.heatmap, device = cairo_pdf)
 
 
 ### Brent
@@ -67,7 +68,7 @@ brent.plot.data$config <- factor(brent.plot.data$config, levels = c("1-50  trees
 brent.mape.heatmap <- ggplot(data = brent.plot.data, aes(x = config, y = n_lags, fill = mape)) + 
   geom_tile() +
   scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
-  labs(title = "RF error heatmap", subtitle = "Brent log returns", x = "hyperparameter configuration", y = "nr. of lags used") +
+  labs(title = "Brent", x = "hyperparameter configuration", y = "nr. of lags used") +
   theme_bw() +
   theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
         axis.line = element_blank(),
@@ -75,11 +76,11 @@ brent.mape.heatmap <- ggplot(data = brent.plot.data, aes(x = config, y = n_lags,
         axis.ticks = element_blank(),
         panel.grid = element_blank(),
         plot.background = element_blank(),
-        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "in"))
+        plot.margin = unit(c(0, 0, 0, 0.5), "in"))
 
 brent.mape.heatmap
 
-ggsave(filename = "plots/3 RF Brent error heatmap.pdf", plot = brent.mape.heatmap, device = cairo_pdf)
+# ggsave(filename = "plots/3 RF Brent error heatmap.pdf", plot = brent.mape.heatmap, device = cairo_pdf)
 
 
 ### Dubai
@@ -103,7 +104,7 @@ dubai.plot.data$config <- factor(dubai.plot.data$config, levels = c("1-50  trees
 dubai.mape.heatmap <- ggplot(data = dubai.plot.data, aes(x = config, y = n_lags, fill = mape)) + 
   geom_tile() +
   scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
-  labs(title = "RF error heatmap", subtitle = "Dubai log returns", x = "hyperparameter configuration", y = "nr. of lags used") +
+  labs(title = "Dubai Fateh", x = "hyperparameter configuration", y = "nr. of lags used") +
   theme_bw() +
   theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
         axis.line = element_blank(),
@@ -111,11 +112,11 @@ dubai.mape.heatmap <- ggplot(data = dubai.plot.data, aes(x = config, y = n_lags,
         axis.ticks = element_blank(),
         panel.grid = element_blank(),
         plot.background = element_blank(),
-        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "in"))
+        plot.margin = unit(c(0, 0, 0, 0.5), "in"))
 
 dubai.mape.heatmap
 
-ggsave(filename = "plots/3 RF Dubai error heatmap.pdf", plot = dubai.mape.heatmap, device = cairo_pdf)
+# ggsave(filename = "plots/3 RF Dubai error heatmap.pdf", plot = dubai.mape.heatmap, device = cairo_pdf)
 
 
 ### NatGas
@@ -139,7 +140,7 @@ natgas.us.plot.data$config <- factor(natgas.us.plot.data$config, levels = c("1-5
 natgas.us.mape.heatmap <- ggplot(data = natgas.us.plot.data, aes(x = config, y = n_lags, fill = mape)) + 
   geom_tile() +
   scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
-  labs(title = "RF error heatmap", subtitle = "US NatGas log returns", x = "hyperparameter configuration", y = "nr. of lags used") +
+  labs(title = "Natural Gas Henry Hub", x = "hyperparameter configuration", y = "nr. of lags used") +
   theme_bw() +
   theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
         axis.line = element_blank(),
@@ -147,11 +148,11 @@ natgas.us.mape.heatmap <- ggplot(data = natgas.us.plot.data, aes(x = config, y =
         axis.ticks = element_blank(),
         panel.grid = element_blank(),
         plot.background = element_blank(),
-        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "in"))
+        plot.margin = unit(c(0, 0, 0, 0.5), "in"))
 
 natgas.us.mape.heatmap
 
-ggsave(filename = "plots/3 RF NatGas error heatmap.pdf", plot = natgas.us.mape.heatmap, device = cairo_pdf)
+# ggsave(filename = "plots/3 RF NatGas error heatmap.pdf", plot = natgas.us.mape.heatmap, device = cairo_pdf)
 
 
 ### WTI
@@ -175,7 +176,7 @@ wti.plot.data$config <- factor(wti.plot.data$config, levels = c("1-50  trees, mt
 wti.mape.heatmap <- ggplot(data = wti.plot.data, aes(x = config, y = n_lags, fill = mape)) + 
   geom_tile() +
   scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
-  labs(title = "RF error heatmap", subtitle = "WTI log returns", x = "hyperparameter configuration", y = "nr. of lags used") +
+  labs(title = "WTI", x = "hyperparameter configuration", y = "nr. of lags used") +
   theme_bw() +
   theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
         axis.line = element_blank(),
@@ -183,8 +184,17 @@ wti.mape.heatmap <- ggplot(data = wti.plot.data, aes(x = config, y = n_lags, fil
         axis.ticks = element_blank(),
         panel.grid = element_blank(),
         plot.background = element_blank(),
-        plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "in"))
+        plot.margin = unit(c(0, 0, 0, 0.5), "in"))
 
 wti.mape.heatmap
 
-ggsave(filename = "plots/3 RF WTI error heatmap.pdf", plot = wti.mape.heatmap, device = cairo_pdf)
+# ggsave(filename = "plots/3 RF WTI error heatmap.pdf", plot = wti.mape.heatmap, device = cairo_pdf)
+
+
+### Clustered version
+rf.heatmaps <- ggarrange(apsp.mape.heatmap, brent.mape.heatmap, dubai.mape.heatmap, natgas.us.mape.heatmap, wti.mape.heatmap,
+                         ncol = 2, nrow = 3)
+
+rf.heatmaps
+
+ggsave(filename = "plots/3 RF combined error heatmaps.pdf", plot = rf.heatmaps, device = cairo_pdf, width = 9, height = 12)
