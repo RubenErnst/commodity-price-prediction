@@ -362,3 +362,20 @@ temp$mape <- unlist(temp$mape)
 tuning.results.wti.log.returns.forked <- rbind(tuning.results.wti.log.returns.forked, temp); rm(temp)
 
 save(tuning.results.wti.log.returns.forked, file = "results/ml models/WTI_log_returns_forked_2.RData")
+
+
+
+
+tuning_forked <- function(l, h1, h2, h3){
+  out <- tryCatch(expr = {
+    res <- ann_tune(data_ts = ts.wti.monthly.absolute, hidden_layers = c(h1, h2, h3), 0.01, 12, l, series = "log.return")
+    print(paste0("Finished l: ", l, ", hl: ", paste(h1, h2, h3, collapse = ", ")))
+    return(data.frame("n_lags" = l, "hidden_config" = paste(h1, h2, h3, sep = ", "), "mae" = res[[1]], "mape" = res[[2]]))
+  }, error = function(cond){
+    res <- ann_tune(data_ts = ts.wti.monthly.absolute, hidden_layers = c(h1, h2, h3), 0.015, 12, l, series = "log.return")
+    print(paste0("Finished l: ", l, ", hl: ", paste(h1, h2, h3, collapse = ", "), " (with Error)"))
+    return(data.frame("n_lags" = l, "hidden_config" = paste(h1, h2, h3, sep = ", "), "mae" = res[[1]], "mape" = res[[2]]))
+  })
+  return(out)
+}
+
