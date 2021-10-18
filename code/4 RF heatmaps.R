@@ -40,7 +40,7 @@ apsp.mape.heatmap <- ggplot(data = apsp.plot.data, aes(x = config, y = n_lags, f
         axis.ticks = element_blank(),
         panel.grid = element_blank(),
         plot.background = element_blank(),
-        plot.margin = unit(c(0, 0, 0, 0.5), "in"))
+        plot.margin = unit(c(0.05, 0, 0, 0.35), "in"))
 
 apsp.mape.heatmap
 
@@ -76,7 +76,7 @@ brent.mape.heatmap <- ggplot(data = brent.plot.data, aes(x = config, y = n_lags,
         axis.ticks = element_blank(),
         panel.grid = element_blank(),
         plot.background = element_blank(),
-        plot.margin = unit(c(0, 0, 0, 0.5), "in"))
+        plot.margin = unit(c(0.05, 0, 0, 0.35), "in"))
 
 brent.mape.heatmap
 
@@ -112,7 +112,7 @@ dubai.mape.heatmap <- ggplot(data = dubai.plot.data, aes(x = config, y = n_lags,
         axis.ticks = element_blank(),
         panel.grid = element_blank(),
         plot.background = element_blank(),
-        plot.margin = unit(c(0, 0, 0, 0.5), "in"))
+        plot.margin = unit(c(0.05, 0, 0, 0.35), "in"))
 
 dubai.mape.heatmap
 
@@ -148,7 +148,7 @@ natgas.us.mape.heatmap <- ggplot(data = natgas.us.plot.data, aes(x = config, y =
         axis.ticks = element_blank(),
         panel.grid = element_blank(),
         plot.background = element_blank(),
-        plot.margin = unit(c(0, 0, 0, 0.5), "in"))
+        plot.margin = unit(c(0.05, 0, 0, 0.35), "in"))
 
 natgas.us.mape.heatmap
 
@@ -184,7 +184,7 @@ wti.mape.heatmap <- ggplot(data = wti.plot.data, aes(x = config, y = n_lags, fil
         axis.ticks = element_blank(),
         panel.grid = element_blank(),
         plot.background = element_blank(),
-        plot.margin = unit(c(0, 0, 0, 0.5), "in"))
+        plot.margin = unit(c(0.05, 0, 0, 0.35), "in"))
 
 wti.mape.heatmap
 
