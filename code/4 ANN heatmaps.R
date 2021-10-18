@@ -214,7 +214,7 @@ apsp.mape.heatmap <- ggplot(data = apsp.plot.data, aes(x = hl_category, y = n_la
         axis.ticks = element_blank(),
         panel.grid = element_blank(),
         plot.background = element_blank(),
-        plot.margin = unit(c(0.1, 0, 0.2, 0.5), "in"))
+        plot.margin = unit(c(0.05, 0, 0, 0.35), "in"))
 
 ## Brent
 brent.mape.heatmap <- ggplot(data = brent.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
@@ -228,7 +228,7 @@ brent.mape.heatmap <- ggplot(data = brent.plot.data, aes(x = hl_category, y = n_
         axis.ticks = element_blank(),
         panel.grid = element_blank(),
         plot.background = element_blank(),
-        plot.margin = unit(c(0.1, 0, 0.2, 0.5), "in"))
+        plot.margin = unit(c(0.05, 0, 0, 0.35), "in"))
 
 ## Dubai
 dubai.mape.heatmap <- ggplot(data = dubai.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
@@ -242,7 +242,7 @@ dubai.mape.heatmap <- ggplot(data = dubai.plot.data, aes(x = hl_category, y = n_
         axis.ticks = element_blank(),
         panel.grid = element_blank(),
         plot.background = element_blank(),
-        plot.margin = unit(c(0.1, 0, 0.2, 0.5), "in"))
+        plot.margin = unit(c(0.05, 0, 0, 0.35), "in"))
 
 ## NatGas
 natgas.us.mape.heatmap <- ggplot(data = natgas.us.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
@@ -256,7 +256,7 @@ natgas.us.mape.heatmap <- ggplot(data = natgas.us.plot.data, aes(x = hl_category
         axis.ticks = element_blank(),
         panel.grid = element_blank(),
         plot.background = element_blank(),
-        plot.margin = unit(c(0.1, 0, 0.2, 0.5), "in"))
+        plot.margin = unit(c(0.05, 0, 0, 0.35), "in"))
 
 ## WTI
 wti.mape.heatmap <- ggplot(data = wti.plot.data, aes(x = hl_category, y = n_lags, fill = mape)) + 
@@ -270,7 +270,7 @@ wti.mape.heatmap <- ggplot(data = wti.plot.data, aes(x = hl_category, y = n_lags
         axis.ticks = element_blank(),
         panel.grid = element_blank(),
         plot.background = element_blank(),
-        plot.margin = unit(c(0.1, 0, 0.2, 0.5), "in"))
+        plot.margin = unit(c(0.05, 0, 0, 0.35), "in"))
 
 
 ann.heatmaps <- ggarrange(apsp.mape.heatmap, brent.mape.heatmap, dubai.mape.heatmap, natgas.us.mape.heatmap, wti.mape.heatmap,
@@ -278,4 +278,4 @@ ann.heatmaps <- ggarrange(apsp.mape.heatmap, brent.mape.heatmap, dubai.mape.heat
 
 ann.heatmaps
 
-ggsave(filename = "plots/3 ANN combined error heatmaps.pdf", plot = ann.heatmaps, device = cairo_pdf, width = 9, height = 14)
+ggsave(filename = "plots/3 ANN combined error heatmaps.pdf", plot = ann.heatmaps, device = cairo_pdf, width = 9, height = 12)
