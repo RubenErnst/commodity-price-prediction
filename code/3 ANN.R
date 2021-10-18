@@ -1177,3 +1177,13 @@ ann.pred <- data.frame("apsp.log.return" = apsp.pred.log.return,
                        "wti.log.return" = wti.pred.log.return)
 
 save(ann.pred, best.ann.apsp, best.ann.brent, best.ann.dubai, best.ann.natgas.us, best.ann.wti, file = "results/ml models/ANN pred.RData")
+
+ann.results <- cbind(data.frame("commodity" = c("APSP", "Brent", "Dubai Fateh", "NatGas Henry Hub", "WTI")),
+                     rbind(tuning.results.apsp.log.returns.forked[which.min(tuning.results.apsp.log.returns.forked$mape),],
+                           tuning.results.brent.log.returns.forked[which.min(tuning.results.brent.log.returns.forked$mape),],
+                           tuning.results.dubai.log.returns.forked[which.min(tuning.results.dubai.log.returns.forked$mape),],
+                           tuning.results.natgas.us.log.returns.forked[which.min(tuning.results.natgas.us.log.returns.forked$mape),],
+                           tuning.results.wti.log.returns.forked[which.min(tuning.results.wti.log.returns.forked$mape),]))
+
+save(ann.results, file = "results/ml models/ANN results.RData")
+openxlsx::write.xlsx(ann.results, file = "results/ml models/ANN results.xlsx")
