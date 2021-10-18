@@ -210,6 +210,7 @@ ses.results$mape[10] <- mape(ts.test, wti.pred.log.return)
 
 ### Save the results
 save(ses.results, file = "results/econometric models/SES.RData")
+openxlsx::write.xlsx(ses.results, file = "results/econometric models/SES.xlsx")
 
 ses.pred <- data.frame("apsp.diff" = apsp.pred.diff, "apsp.log.return" = apsp.pred.log.return,
                        "brent.diff" = brent.pred.diff, "brent.log.return" = brent.pred.log.return,
