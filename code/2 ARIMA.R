@@ -250,6 +250,7 @@ autoplot(forecast(fit, h = 12))
 
 ### Save the results
 save(arima.results, file = "results/econometric models/ARIMA.RData")
+openxlsx::write.xlsx(arima.results, file = "results/econometric models/ARIMA.xlsx")
 
 arima.pred <- data.frame("apsp.diff" = apsp.pred.diff, "apsp.log.return" = apsp.pred.log.return,
                          "brent.diff" = brent.pred.diff, "brent.log.return" = brent.pred.log.return,
