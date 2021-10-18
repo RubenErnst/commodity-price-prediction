@@ -469,3 +469,19 @@ rf.pred <- data.frame("apsp.log.return" = apsp.pred.log.return,
                       "natgas.us.log.return" = natgas.us.pred.log.return,
                       "wti.log.return" = wti.pred.log.return)
 save(rf.pred, file = "results/ml models/RF pred.RData")
+
+load("results/ml models/RF_APSP_log_returns_forked.RData")
+load("results/ml models/RF_Brent_log_returns_forked.RData")
+load("results/ml models/RF_Dubai_log_returns_forked.RData")
+load("results/ml models/RF_NatGas_log_returns_forked.RData")
+load("results/ml models/RF_WTI_log_returns_forked.RData")
+
+rf.results <- cbind(data.frame("commodity" = c("APSP", "Brent", "Dubai Fateh", "NatGas Henry Hub", "WTI")),
+                     rbind(tuning.results.apsp.log.returns.forked[which.min(tuning.results.apsp.log.returns.forked$mape),],
+                           tuning.results.brent.log.returns.forked[which.min(tuning.results.brent.log.returns.forked$mape),],
+                           tuning.results.dubai.log.returns.forked[which.min(tuning.results.dubai.log.returns.forked$mape),],
+                           tuning.results.natgas.us.log.returns.forked[which.min(tuning.results.natgas.us.log.returns.forked$mape),],
+                           tuning.results.wti.log.returns.forked[which.min(tuning.results.wti.log.returns.forked$mape),]))
+
+save(rf.results, file = "results/ml models/RF results.RData")
+openxlsx::write.xlsx(rf.results, file = "results/ml models/RF results.xlsx")
