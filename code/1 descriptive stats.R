@@ -317,7 +317,7 @@ boxplot.data$year <- as.factor(boxplot.data$year)
 
 dispersion.plot <- ggplot(data = boxplot.data, aes(x = year, y = price)) +
   geom_boxplot() +
-  labs(title = "Descriptive statistics: dispersion per commodity", x = "Year", y = "Price (USD)") +
+  labs(x = "Year", y = "Price (USD)") +
   theme_bw() +
   theme(panel.grid = element_blank(),
         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
