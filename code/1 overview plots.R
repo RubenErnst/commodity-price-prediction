@@ -1,7 +1,6 @@
 rm(list = ls())
 
 ### Plot overviews on some of the data
-
 library(tidyverse)
 library(ggplot2)
 library(rmaf)
@@ -198,4 +197,31 @@ acf(ts.wti.monthly.difference, main = "difference")
 pacf(ts.wti.monthly.absolute, main = "prices")
 pacf(ts.wti.monthly.log.returns, main = "log returns")
 pacf(ts.wti.monthly.difference, main = "difference")
+dev.off()
+
+
+
+### Combined correlation plots
+cairo_pdf("plots/0_All autocorrelations.pdf", width = 9, height = 12)
+layout(mat = matrix(data = c(1:20), nrow = 5, ncol = 4, byrow = TRUE))
+acf(ts.apsp.monthly.log.returns[1:length(ts.apsp.monthly.log.returns)], main = "APSP log returns", ylim = c(-0.2,1))
+acf(ts.apsp.monthly.difference[1:length(ts.apsp.monthly.difference)], main = "APSP difference", ylim = c(-0.2,1))
+pacf(ts.apsp.monthly.log.returns[1:length(ts.apsp.monthly.log.returns)], main = "APSP log returns", ylim = c(-0.2,1))
+pacf(ts.apsp.monthly.difference[1:length(ts.apsp.monthly.difference)], main = "APSP difference", ylim = c(-0.2,1))
+acf(ts.brent.monthly.log.returns[1:length(ts.brent.monthly.log.returns)], main = "Brent log returns", ylim = c(-0.2,1))
+acf(ts.brent.monthly.difference[1:length(ts.brent.monthly.difference)], main = "Brent difference", ylim = c(-0.2,1))
+pacf(ts.brent.monthly.log.returns[1:length(ts.brent.monthly.log.returns)], main = "Brent log returns", ylim = c(-0.2,1))
+pacf(ts.brent.monthly.difference[1:length(ts.brent.monthly.difference)], main = "Brent difference", ylim = c(-0.2,1))
+acf(ts.dubai.monthly.log.returns[1:length(ts.dubai.monthly.log.returns)], main = "Dubai Fateh log returns", ylim = c(-0.2,1))
+acf(ts.dubai.monthly.difference[1:length(ts.dubai.monthly.difference)], main = "Dubai Fateh difference", ylim = c(-0.2,1))
+pacf(ts.dubai.monthly.log.returns[1:length(ts.dubai.monthly.log.returns)], main = "Dubai Fateh log returns", ylim = c(-0.2,1))
+pacf(ts.dubai.monthly.difference[1:length(ts.dubai.monthly.difference)], main = "Dubai Fateh difference", ylim = c(-0.2,1))
+acf(ts.natgas.us.monthly.log.returns[1:length(ts.natgas.us.monthly.log.returns)], main = "NatGas Henry Hub log returns", ylim = c(-0.2,1))
+acf(ts.natgas.us.monthly.difference[1:length(ts.natgas.us.monthly.difference)], main = "NatGas Henry Hub difference", ylim = c(-0.2,1))
+pacf(ts.natgas.us.monthly.log.returns[1:length(ts.natgas.us.monthly.log.returns)], main = "NatGas Henry Hub log returns", ylim = c(-0.2,1))
+pacf(ts.natgas.us.monthly.difference[1:length(ts.natgas.us.monthly.difference)], main = "NatGas Henry Hub difference", ylim = c(-0.2,1))
+acf(ts.wti.monthly.log.returns[1:length(ts.wti.monthly.log.returns)], main = "WTI log returns", ylim = c(-0.2,1))
+acf(ts.wti.monthly.difference[1:length(ts.wti.monthly.difference)], main = "WTI difference", ylim = c(-0.2,1))
+pacf(ts.wti.monthly.log.returns[1:length(ts.wti.monthly.log.returns)], main = "WTI log returns", ylim = c(-0.2,1))
+pacf(ts.wti.monthly.difference[1:length(ts.wti.monthly.difference)], main = "WTI difference", ylim = c(-0.2,1))
 dev.off()
