@@ -93,7 +93,7 @@ ann_tune <- function(data_ts, hidden_layers, target_threshold, h, n_lags, series
 
 
 ### APSP
-fork.params <- expand.grid("l" = 5:20, "h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+fork.params <- expand.grid("l" = 1:4, "h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
 tuning_forked <- function(l, h1, h2, h3){
   out <- tryCatch(expr = {
     res <- ann_tune(data_ts = ts.apsp.monthly.absolute, hidden_layers = c(h1, h2, h3), 0.01, 12, l, series = "log.return")
@@ -115,7 +115,7 @@ tuning.results.apsp.log.returns.forked$hidden_config <- unlist(tuning.results.ap
 tuning.results.apsp.log.returns.forked$mae <- unlist(tuning.results.apsp.log.returns.forked$mae)
 tuning.results.apsp.log.returns.forked$mape <- unlist(tuning.results.apsp.log.returns.forked$mape)
 
-fork.params <- expand.grid("l" = 5:20, "h1" = 1:20, "h2" = 1:20)
+fork.params <- expand.grid("l" = 1:4, "h1" = 1:20, "h2" = 1:20)
 tuning_forked <- function(l, h1, h2){
   out <- tryCatch(expr = {
     res <- ann_tune(data_ts = ts.apsp.monthly.absolute, hidden_layers = c(h1, h2), 0.01, 12, l, series = "log.return")
@@ -139,7 +139,7 @@ temp$mape <- unlist(temp$mape)
 
 tuning.results.apsp.log.returns.forked <- rbind(tuning.results.apsp.log.returns.forked, temp)
 
-fork.params <- expand.grid("l" = 5:20, "h1" = 1:20)
+fork.params <- expand.grid("l" = 1:4, "h1" = 1:20)
 tuning_forked <- function(l, h1){
   out <- tryCatch(expr = {
     res <- ann_tune(data_ts = ts.apsp.monthly.absolute, hidden_layers = c(h1), 0.01, 12, l, series = "log.return")
@@ -170,7 +170,7 @@ save(tuning.results.apsp.log.returns.forked, file = "results/ml models/APSP_log_
 
 
 ### Brent
-fork.params <- expand.grid("l" = 5:20, "h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+fork.params <- expand.grid("l" = 1:4, "h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
 tuning_forked <- function(l, h1, h2, h3){
   out <- tryCatch(expr = {
     res <- ann_tune(data_ts = ts.brent.monthly.absolute, hidden_layers = c(h1, h2, h3), 0.01, 12, l, series = "log.return")
@@ -192,7 +192,7 @@ tuning.results.brent.log.returns.forked$hidden_config <- unlist(tuning.results.b
 tuning.results.brent.log.returns.forked$mae <- unlist(tuning.results.brent.log.returns.forked$mae)
 tuning.results.brent.log.returns.forked$mape <- unlist(tuning.results.brent.log.returns.forked$mape)
 
-fork.params <- expand.grid("l" = 5:20, "h1" = 1:20, "h2" = 1:20)
+fork.params <- expand.grid("l" = 1:4, "h1" = 1:20, "h2" = 1:20)
 tuning_forked <- function(l, h1, h2){
   out <- tryCatch(expr = {
     res <- ann_tune(data_ts = ts.brent.monthly.absolute, hidden_layers = c(h1, h2), 0.01, 12, l, series = "log.return")
@@ -216,7 +216,7 @@ temp$mape <- unlist(temp$mape)
 
 tuning.results.brent.log.returns.forked <- rbind(tuning.results.brent.log.returns.forked, temp)
 
-fork.params <- expand.grid("l" = 5:20, "h1" = 1:20)
+fork.params <- expand.grid("l" = 1:4, "h1" = 1:20)
 tuning_forked <- function(l, h1){
   out <- tryCatch(expr = {
     res <- ann_tune(data_ts = ts.brent.monthly.absolute, hidden_layers = c(h1), 0.01, 12, l, series = "log.return")
@@ -247,7 +247,7 @@ save(tuning.results.brent.log.returns.forked, file = "results/ml models/Brent_lo
 
 
 ### Dubai
-fork.params <- expand.grid("l" = 5:20, "h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+fork.params <- expand.grid("l" = 1:4, "h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
 tuning_forked <- function(l, h1, h2, h3){
   out <- tryCatch(expr = {
     res <- ann_tune(data_ts = ts.dubai.monthly.absolute, hidden_layers = c(h1, h2, h3), 0.01, 12, l, series = "log.return")
@@ -269,7 +269,7 @@ tuning.results.dubai.log.returns.forked$hidden_config <- unlist(tuning.results.d
 tuning.results.dubai.log.returns.forked$mae <- unlist(tuning.results.dubai.log.returns.forked$mae)
 tuning.results.dubai.log.returns.forked$mape <- unlist(tuning.results.dubai.log.returns.forked$mape)
 
-fork.params <- expand.grid("l" = 5:20, "h1" = 1:20, "h2" = 1:20)
+fork.params <- expand.grid("l" = 1:4, "h1" = 1:20, "h2" = 1:20)
 tuning_forked <- function(l, h1, h2){
   out <- tryCatch(expr = {
     res <- ann_tune(data_ts = ts.dubai.monthly.absolute, hidden_layers = c(h1, h2), 0.01, 12, l, series = "log.return")
@@ -293,7 +293,7 @@ temp$mape <- unlist(temp$mape)
 
 tuning.results.dubai.log.returns.forked <- rbind(tuning.results.dubai.log.returns.forked, temp)
 
-fork.params <- expand.grid("l" = 5:20, "h1" = 1:20)
+fork.params <- expand.grid("l" = 1:4, "h1" = 1:20)
 tuning_forked <- function(l, h1){
   out <- tryCatch(expr = {
     res <- ann_tune(data_ts = ts.dubai.monthly.absolute, hidden_layers = c(h1), 0.01, 12, l, series = "log.return")
@@ -324,7 +324,7 @@ save(tuning.results.dubai.log.returns.forked, file = "results/ml models/Dubai_lo
 
 
 ### US NatGas
-fork.params <- expand.grid("l" = 5:20, "h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+fork.params <- expand.grid("l" = 1:4, "h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
 tuning_forked <- function(l, h1, h2, h3){
   out <- tryCatch(expr = {
     res <- ann_tune(data_ts = ts.natgas.us.monthly.absolute, hidden_layers = c(h1, h2, h3), 0.01, 12, l, series = "log.return")
@@ -346,7 +346,7 @@ tuning.results.natgas.us.log.returns.forked$hidden_config <- unlist(tuning.resul
 tuning.results.natgas.us.log.returns.forked$mae <- unlist(tuning.results.natgas.us.log.returns.forked$mae)
 tuning.results.natgas.us.log.returns.forked$mape <- unlist(tuning.results.natgas.us.log.returns.forked$mape)
 
-fork.params <- expand.grid("l" = 5:20, "h1" = 1:20, "h2" = 1:20)
+fork.params <- expand.grid("l" = 1:4, "h1" = 1:20, "h2" = 1:20)
 tuning_forked <- function(l, h1, h2){
   out <- tryCatch(expr = {
     res <- ann_tune(data_ts = ts.natgas.us.monthly.absolute, hidden_layers = c(h1, h2), 0.01, 12, l, series = "log.return")
@@ -370,7 +370,7 @@ temp$mape <- unlist(temp$mape)
 
 tuning.results.natgas.us.log.returns.forked <- rbind(tuning.results.natgas.us.log.returns.forked, temp)
 
-fork.params <- expand.grid("l" = 5:20, "h1" = 1:20)
+fork.params <- expand.grid("l" = 1:4, "h1" = 1:20)
 tuning_forked <- function(l, h1){
   out <- tryCatch(expr = {
     res <- ann_tune(data_ts = ts.natgas.us.monthly.absolute, hidden_layers = c(h1), 0.01, 12, l, series = "log.return")
@@ -401,7 +401,7 @@ save(tuning.results.natgas.us.log.returns.forked, file = "results/ml models/NatG
 
 
 ### WTI
-fork.params <- expand.grid("l" = 5:20, "h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+fork.params <- expand.grid("l" = 1:4, "h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
 tuning_forked <- function(l, h1, h2, h3){
   out <- tryCatch(expr = {
     res <- ann_tune(data_ts = ts.wti.monthly.absolute, hidden_layers = c(h1, h2, h3), 0.01, 12, l, series = "log.return")
@@ -423,7 +423,7 @@ tuning.results.wti.log.returns.forked$hidden_config <- unlist(tuning.results.wti
 tuning.results.wti.log.returns.forked$mae <- unlist(tuning.results.wti.log.returns.forked$mae)
 tuning.results.wti.log.returns.forked$mape <- unlist(tuning.results.wti.log.returns.forked$mape)
 
-fork.params <- expand.grid("l" = 5:20, "h1" = 1:20, "h2" = 1:20)
+fork.params <- expand.grid("l" = 1:4, "h1" = 1:20, "h2" = 1:20)
 tuning_forked <- function(l, h1, h2){
   out <- tryCatch(expr = {
     res <- ann_tune(data_ts = ts.wti.monthly.absolute, hidden_layers = c(h1, h2), 0.01, 12, l, series = "log.return")
@@ -447,7 +447,7 @@ temp$mape <- unlist(temp$mape)
 
 tuning.results.wti.log.returns.forked <- rbind(tuning.results.wti.log.returns.forked, temp)
 
-fork.params <- expand.grid("l" = 5:20, "h1" = 1:20)
+fork.params <- expand.grid("l" = 1:4, "h1" = 1:20)
 tuning_forked <- function(l, h1){
   out <- tryCatch(expr = {
     res <- ann_tune(data_ts = ts.wti.monthly.absolute, hidden_layers = c(h1), 0.01, 12, l, series = "log.return")
