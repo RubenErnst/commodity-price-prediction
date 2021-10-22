@@ -92,37 +92,46 @@ ann_tune <- function(data_ts, hidden_layers, target_threshold, h, n_lags, series
 }
 
 
+<<<<<<< Updated upstream
 ### APSP
 fork.params <- expand.grid("l" = 2:4, "h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+=======
+### LNG
+fork.params <- expand.grid("l" = 2:20, "h1" = 1:20, "h2" = 1:20, "h3" = 1:20)
+>>>>>>> Stashed changes
 tuning_forked <- function(l, h1, h2, h3){
   out <- tryCatch(expr = {
-    res <- ann_tune(data_ts = ts.apsp.monthly.absolute, hidden_layers = c(h1, h2, h3), 0.01, 12, l, series = "log.return")
+    res <- ann_tune(data_ts = ts.lng.monthly.absolute, hidden_layers = c(h1, h2, h3), 0.01, 12, l, series = "log.return")
     print(paste0("Finished l: ", l, ", hl: ", paste(h1, h2, h3, collapse = ", ")))
     return(data.frame("n_lags" = l, "hidden_config" = paste(h1, h2, h3, sep = ", "), "mae" = res[[1]], "mape" = res[[2]]))
   }, error = function(cond){
-    res <- ann_tune(data_ts = ts.apsp.monthly.absolute, hidden_layers = c(h1, h2, h3), 0.015, 12, l, series = "log.return")
+    res <- ann_tune(data_ts = ts.lng.monthly.absolute, hidden_layers = c(h1, h2, h3), 0.015, 12, l, series = "log.return")
     print(paste0("Finished l: ", l, ", hl: ", paste(h1, h2, h3, collapse = ", "), " (with Error)"))
     return(data.frame("n_lags" = l, "hidden_config" = paste(h1, h2, h3, sep = ", "), "mae" = res[[1]], "mape" = res[[2]]))
   })
   return(out)
 }
 
-tuning.results.apsp.log.returns.forked <- mcmapply(FUN = function(l, h1, h2, h3){return(tuning_forked(l, h1, h2, h3))}, l = fork.params$l, h1 = fork.params$h1, h2 = fork.params$h2, h3 = fork.params$h3)
+tuning.results.lng.log.returns.forked <- mcmapply(FUN = function(l, h1, h2, h3){return(tuning_forked(l, h1, h2, h3))}, l = fork.params$l, h1 = fork.params$h1, h2 = fork.params$h2, h3 = fork.params$h3)
 
-tuning.results.apsp.log.returns.forked <- as.data.frame(t(tuning.results.apsp.log.returns.forked))
-tuning.results.apsp.log.returns.forked$n_lags <- unlist(tuning.results.apsp.log.returns.forked$n_lags)
-tuning.results.apsp.log.returns.forked$hidden_config <- unlist(tuning.results.apsp.log.returns.forked$hidden_config)
-tuning.results.apsp.log.returns.forked$mae <- unlist(tuning.results.apsp.log.returns.forked$mae)
-tuning.results.apsp.log.returns.forked$mape <- unlist(tuning.results.apsp.log.returns.forked$mape)
+tuning.results.lng.log.returns.forked <- as.data.frame(t(tuning.results.lng.log.returns.forked))
+tuning.results.lng.log.returns.forked$n_lags <- unlist(tuning.results.lng.log.returns.forked$n_lags)
+tuning.results.lng.log.returns.forked$hidden_config <- unlist(tuning.results.lng.log.returns.forked$hidden_config)
+tuning.results.lng.log.returns.forked$mae <- unlist(tuning.results.lng.log.returns.forked$mae)
+tuning.results.lng.log.returns.forked$mape <- unlist(tuning.results.lng.log.returns.forked$mape)
 
+<<<<<<< Updated upstream
 fork.params <- expand.grid("l" = 2:4, "h1" = 1:20, "h2" = 1:20)
+=======
+fork.params <- expand.grid("l" = 2:20, "h1" = 1:20, "h2" = 1:20)
+>>>>>>> Stashed changes
 tuning_forked <- function(l, h1, h2){
   out <- tryCatch(expr = {
-    res <- ann_tune(data_ts = ts.apsp.monthly.absolute, hidden_layers = c(h1, h2), 0.01, 12, l, series = "log.return")
+    res <- ann_tune(data_ts = ts.lng.monthly.absolute, hidden_layers = c(h1, h2), 0.01, 12, l, series = "log.return")
     print(paste0("Finished l: ", l, ", hl: ", paste(h1, h2, collapse = ", ")))
     return(data.frame("n_lags" = l, "hidden_config" = paste(h1, h2, sep = ", "), "mae" = res[[1]], "mape" = res[[2]]))
   }, error = function(cond){
-    res <- ann_tune(data_ts = ts.apsp.monthly.absolute, hidden_layers = c(h1, h2), 0.015, 12, l, series = "log.return")
+    res <- ann_tune(data_ts = ts.lng.monthly.absolute, hidden_layers = c(h1, h2), 0.015, 12, l, series = "log.return")
     print(paste0("Finished l: ", l, ", hl: ", paste(h1, h2, collapse = ", "), " (with Error)"))
     return(data.frame("n_lags" = l, "hidden_config" = paste(h1, h2, sep = ", "), "mae" = res[[1]], "mape" = res[[2]]))
   })
@@ -137,16 +146,20 @@ temp$hidden_config <- unlist(temp$hidden_config)
 temp$mae <- unlist(temp$mae)
 temp$mape <- unlist(temp$mape)
 
-tuning.results.apsp.log.returns.forked <- rbind(tuning.results.apsp.log.returns.forked, temp)
+tuning.results.lng.log.returns.forked <- rbind(tuning.results.lng.log.returns.forked, temp)
 
+<<<<<<< Updated upstream
 fork.params <- expand.grid("l" = 2:4, "h1" = 1:20)
+=======
+fork.params <- expand.grid("l" = 2:20, "h1" = 1:20)
+>>>>>>> Stashed changes
 tuning_forked <- function(l, h1){
   out <- tryCatch(expr = {
-    res <- ann_tune(data_ts = ts.apsp.monthly.absolute, hidden_layers = c(h1), 0.01, 12, l, series = "log.return")
+    res <- ann_tune(data_ts = ts.lng.monthly.absolute, hidden_layers = c(h1), 0.01, 12, l, series = "log.return")
     print(paste0("Finished l: ", l, ", hl: ", paste(h1, collapse = ", ")))
     return(data.frame("n_lags" = l, "hidden_config" = paste(h1, sep = ", "), "mae" = res[[1]], "mape" = res[[2]]))
   }, error = function(cond){
-    res <- ann_tune(data_ts = ts.apsp.monthly.absolute, hidden_layers = c(h1), 0.015, 12, l, series = "log.return")
+    res <- ann_tune(data_ts = ts.lng.monthly.absolute, hidden_layers = c(h1), 0.015, 12, l, series = "log.return")
     print(paste0("Finished l: ", l, ", hl: ", paste(h1, collapse = ", "), " (with Error)"))
     return(data.frame("n_lags" = l, "hidden_config" = paste(h1, sep = ", "), "mae" = res[[1]], "mape" = res[[2]]))
   })
@@ -164,8 +177,9 @@ temp$mape <- unlist(temp$mape)
 temp2 <- temp
 save(temp2, file = "results/temp/1l.RData")
 
-tuning.results.apsp.log.returns.forked <- rbind(tuning.results.apsp.log.returns.forked, temp); rm(temp)
+tuning.results.lng.log.returns.forked <- rbind(tuning.results.lng.log.returns.forked, temp); rm(temp)
 
+<<<<<<< Updated upstream
 save(tuning.results.apsp.log.returns.forked, file = "results/ml models/APSP_log_returns_forked_3.RData")
 
 
@@ -475,3 +489,6 @@ save(temp2, file = "results/temp/1l.RData")
 tuning.results.wti.log.returns.forked <- rbind(tuning.results.wti.log.returns.forked, temp); rm(temp)
 
 save(tuning.results.wti.log.returns.forked, file = "results/ml models/WTI_log_returns_forked_3.RData")
+=======
+save(tuning.results.lng.log.returns.forked, file = "results/ml models/LNG_log_returns_forked_2.RData")
+>>>>>>> Stashed changes
