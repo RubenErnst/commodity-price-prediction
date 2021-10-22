@@ -1154,6 +1154,7 @@ save(tuning.results.wti.log.returns.forked, file = "results/ml models/WTI_log_re
 load("results/ml models/APSP_log_returns_forked_2.RData")
 load("results/ml models/Brent_log_returns_forked_2.RData")
 load("results/ml models/Dubai_log_returns_forked_2.RData")
+load("results/ml models/LNG_log_returns_forked_2.RData")
 load("results/ml models/NatGas_log_returns_forked_2.RData")
 load("results/ml models/WTI_log_returns_forked_2.RData")
 
@@ -1197,6 +1198,19 @@ dubai.pred.log.return <- ts.dubai.monthly.absolute[(nrow(lagged) - 12 + 1)] * cu
 best.ann.dubai <- ann
 
 
+n_lags <- tuning.results.lng.log.returns.forked$n_lags[which.min(tuning.results.lng.log.returns.forked$mape)]
+hidden_layers <- as.integer(unlist(str_split(as.character(tuning.results.lng.log.returns.forked$hidden_config[which.min(tuning.results.lng.log.returns.forked$mape)]), ", ")))
+lagged <- data.frame("y" = log(ts.lng.monthly.absolute[1:length(ts.lng.monthly.absolute)] / lag(ts.lng.monthly.absolute[1:length(ts.lng.monthly.absolute)]))[-1])
+for (i in 1:n_lags){
+  eval(parse(text = paste0("lagged$l", i, " = lag(lagged$y[1:nrow(lagged)], ", i, ")")))
+}
+
+set.seed(42)
+eval(parse(text = paste0("ann <- neuralnet(formula = y ~ ", paste(names(lagged)[-1], collapse = " + "), ", data = lagged[", n_lags + 1, ":(nrow(lagged) - ", n_lags, "),], hidden = ", paste0("c(", paste(hidden_layers, collapse = ", "), ")"), ", threshold = 0.01)")))
+lng.pred.log.return <- ts.lng.monthly.absolute[(nrow(lagged) - 12 + 1)] * cumprod(exp(ann_recursive_pred(model = ann, h = 12, lagged.data = lagged[(nrow(lagged) - 12 + 1), -1])))
+best.ann.lng <- ann
+
+
 n_lags <- tuning.results.natgas.us.log.returns.forked$n_lags[which.min(tuning.results.natgas.us.log.returns.forked$mape)]
 hidden_layers <- as.integer(unlist(str_split(as.character(tuning.results.natgas.us.log.returns.forked$hidden_config[which.min(tuning.results.natgas.us.log.returns.forked$mape)]), ", ")))
 lagged <- data.frame("y" = log(ts.natgas.us.monthly.absolute[1:length(ts.natgas.us.monthly.absolute)] / lag(ts.natgas.us.monthly.absolute[1:length(ts.natgas.us.monthly.absolute)]))[-1])
@@ -1226,15 +1240,17 @@ best.ann.wti <- ann
 ann.pred <- data.frame("apsp.log.return" = apsp.pred.log.return,
                        "brent.log.return" = brent.pred.log.return,
                        "dubai.log.return" = dubai.pred.log.return,
+                       "lng.log.return" = lng.pred.log.return,
                        "natgas.us.log.return" = natgas.us.pred.log.return,
                        "wti.log.return" = wti.pred.log.return)
 
-save(ann.pred, best.ann.apsp, best.ann.brent, best.ann.dubai, best.ann.natgas.us, best.ann.wti, file = "results/ml models/ANN pred.RData")
+save(ann.pred, best.ann.apsp, best.ann.brent, best.ann.dubai, best.ann.lng, best.ann.natgas.us, best.ann.wti, file = "results/ml models/ANN pred.RData")
 
-ann.results <- cbind(data.frame("commodity" = c("APSP", "Brent", "Dubai Fateh", "NatGas Henry Hub", "WTI")),
+ann.results <- cbind(data.frame("commodity" = c("APSP", "Brent", "Dubai Fateh", "LNG Asia", "NatGas Henry Hub", "WTI")),
                      rbind(tuning.results.apsp.log.returns.forked[which.min(tuning.results.apsp.log.returns.forked$mape),],
                            tuning.results.brent.log.returns.forked[which.min(tuning.results.brent.log.returns.forked$mape),],
                            tuning.results.dubai.log.returns.forked[which.min(tuning.results.dubai.log.returns.forked$mape),],
+                           tuning.results.lng.log.returns.forked[which.min(tuning.results.lng.log.returns.forked$mape),],
                            tuning.results.natgas.us.log.returns.forked[which.min(tuning.results.natgas.us.log.returns.forked$mape),],
                            tuning.results.wti.log.returns.forked[which.min(tuning.results.wti.log.returns.forked$mape),]))
 
