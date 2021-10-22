@@ -16,6 +16,7 @@ load("clean data/Brent Crude monthly.RData")
 load("clean data/Dubai Fateh monthly.RData")
 load("clean data/Nat Gas Henry Hub monthly.RData")
 load("clean data/WTI Crude monthly.RData")
+load("clean data/LNG Asia monthly.RData")
 
 
 ### Create time series
@@ -129,10 +130,33 @@ dev.off()
 ts.wti.monthly.difference <- diff(ts.wti.monthly.absolute)
 
 
+## LNG
+ts.lng.monthly.absolute <- ts(lng.monthly.absolute$value,
+                              start = c(min(lng.monthly.absolute$year), min(lng.monthly.absolute$month[lng.monthly.absolute$year == min(lng.monthly.absolute$year)])),
+                              end = c(max(lng.monthly.absolute$year), max(lng.monthly.absolute$month[lng.monthly.absolute$year == max(lng.monthly.absolute$year)])),
+                              frequency = 12)
+
+cairo_pdf("plots/0_LNG monthly prices.pdf", width = 8, height = 5.5)
+plot.ts(ts.lng.monthly.absolute, ylab = "LNG monthly prices")
+dev.off()
+
+ts.lng.monthly.log.returns <- ts(log(lng.monthly.return$value + 1),
+                                 start = c(min(lng.monthly.return$year), min(lng.monthly.return$month[lng.monthly.return$year == min(lng.monthly.return$year)])),
+                                 end = c(max(lng.monthly.return$year), max(lng.monthly.return$month[lng.monthly.return$year == max(lng.monthly.return$year)])),
+                                 frequency = 12)
+
+cairo_pdf("plots/0_LNG monthly log returns.pdf", width = 8, height = 5.5)
+plot.ts(ts.lng.monthly.log.returns, ylab = "LNG monthly log returns")
+dev.off()
+
+ts.lng.monthly.difference <- diff(ts.lng.monthly.absolute)
+
+
 ### Save timeseries
 save(ts.apsp.monthly.absolute, ts.apsp.monthly.log.returns, ts.apsp.monthly.difference, ts.brent.monthly.absolute, ts.brent.monthly.log.returns,
      ts.brent.monthly.difference, ts.dubai.monthly.absolute, ts.dubai.monthly.log.returns, ts.dubai.monthly.difference, ts.natgas.us.monthly.absolute,
      ts.natgas.us.monthly.log.returns, ts.natgas.us.monthly.difference, ts.wti.monthly.absolute, ts.wti.monthly.log.returns, ts.wti.monthly.difference,
+     ts.lng.monthly.absolute, ts.lng.monthly.difference, ts.lng.monthly.log.returns,
      file = "clean data/timeseries.RData")
 
 load("clean data/timeseries.RData")
@@ -199,11 +223,22 @@ pacf(ts.wti.monthly.log.returns, main = "log returns")
 pacf(ts.wti.monthly.difference, main = "difference")
 dev.off()
 
+## LNG
+cairo_pdf("plots/0_LNG autocorrelations.pdf", width = 8.25, height = 10)
+layout(mat = matrix(data = c(1, 1, 1, 2, 3, 4, 5, 6, 7), nrow = 3, ncol = 3, byrow = TRUE))
+plot.ts(ts.lng.monthly.absolute, ylab = "LNG monthly prices", main = "LNG spot")
+acf(ts.lng.monthly.absolute, main = "prices")
+acf(ts.lng.monthly.log.returns, main = "log returns")
+acf(ts.lng.monthly.difference, main = "difference")
+pacf(ts.lng.monthly.absolute, main = "prices")
+pacf(ts.lng.monthly.log.returns, main = "log returns")
+pacf(ts.lng.monthly.difference, main = "difference")
+dev.off()
 
 
 ### Combined correlation plots
 cairo_pdf("plots/0_All autocorrelations.pdf", width = 9, height = 12)
-layout(mat = matrix(data = c(1:20), nrow = 5, ncol = 4, byrow = TRUE))
+layout(mat = matrix(data = c(1:24), nrow = 6, ncol = 4, byrow = TRUE))
 acf(ts.apsp.monthly.log.returns[1:length(ts.apsp.monthly.log.returns)], main = "APSP log returns", ylim = c(-0.2,1))
 acf(ts.apsp.monthly.difference[1:length(ts.apsp.monthly.difference)], main = "APSP difference", ylim = c(-0.2,1))
 pacf(ts.apsp.monthly.log.returns[1:length(ts.apsp.monthly.log.returns)], main = "APSP log returns", ylim = c(-0.2,1))
@@ -216,6 +251,10 @@ acf(ts.dubai.monthly.log.returns[1:length(ts.dubai.monthly.log.returns)], main =
 acf(ts.dubai.monthly.difference[1:length(ts.dubai.monthly.difference)], main = "Dubai Fateh difference", ylim = c(-0.2,1))
 pacf(ts.dubai.monthly.log.returns[1:length(ts.dubai.monthly.log.returns)], main = "Dubai Fateh log returns", ylim = c(-0.2,1))
 pacf(ts.dubai.monthly.difference[1:length(ts.dubai.monthly.difference)], main = "Dubai Fateh difference", ylim = c(-0.2,1))
+acf(ts.lng.monthly.log.returns[1:length(ts.lng.monthly.log.returns)], main = "LNG log returns", ylim = c(-0.2,1))
+acf(ts.lng.monthly.difference[1:length(ts.lng.monthly.difference)], main = "LNG difference", ylim = c(-0.2,1))
+pacf(ts.lng.monthly.log.returns[1:length(ts.lng.monthly.log.returns)], main = "LNG log returns", ylim = c(-0.2,1))
+pacf(ts.lng.monthly.difference[1:length(ts.lng.monthly.difference)], main = "LNG difference", ylim = c(-0.2,1))
 acf(ts.natgas.us.monthly.log.returns[1:length(ts.natgas.us.monthly.log.returns)], main = "NatGas Henry Hub log returns", ylim = c(-0.2,1))
 acf(ts.natgas.us.monthly.difference[1:length(ts.natgas.us.monthly.difference)], main = "NatGas Henry Hub difference", ylim = c(-0.2,1))
 pacf(ts.natgas.us.monthly.log.returns[1:length(ts.natgas.us.monthly.log.returns)], main = "NatGas Henry Hub log returns", ylim = c(-0.2,1))
