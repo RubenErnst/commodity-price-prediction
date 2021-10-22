@@ -163,6 +163,34 @@ apsp.monthly.absolute <- subset(apsp.monthly.absolute, !is.na(value))
 
 
 
+##### ASIA LNG ----
+lng.monthly <- subset(pcps, commodity.name == "LNG, Asia" & grepl(".*M.*", month))
+
+# Extract months and years
+lng.monthly$year <- as.numeric(str_extract(lng.monthly$month, "\\d{4}"))
+lng.monthly$month <- as.numeric(str_remove(lng.monthly$month, "\\d{4}M"))
+
+# Sort timeseries
+lng.monthly <- arrange(lng.monthly, year, month)
+
+
+### Extract return series
+lng.monthly.return <- subset(lng.monthly, unit.code == "PC_PP_PT")
+
+# Drop empty, duplicate rows
+lng.monthly.return <- subset(lng.monthly.return, !is.na(value))
+
+# Convert from percentage points to percent
+lng.monthly.return$value <- lng.monthly.return$value / 100
+
+
+### Extract absolute value series
+lng.monthly.absolute <- subset(lng.monthly, unit.code == "USD")
+
+# Drop empty, duplicate rows
+lng.monthly.absolute <- subset(lng.monthly.absolute, !is.na(value))
+
+
 ##### Nat Gas US monthly ----
 natgas.us.monthly <- subset(pcps, commodity.name == "Natural Gas, US Henry Hub Gas" & grepl(".*M.*", month))
 
@@ -191,10 +219,10 @@ natgas.us.monthly.absolute <- subset(natgas.us.monthly, unit.code == "USD")
 natgas.us.monthly.absolute <- subset(natgas.us.monthly.absolute, !is.na(value))
 
 
-
 ### Save cleaned datasets
 save(apsp.monthly, apsp.monthly.absolute, apsp.monthly.return, file = "clean data/APSP monthly.RData")
 save(brent.monthly, brent.monthly.absolute, brent.monthly.return, file = "clean data/Brent Crude monthly.RData")
 save(dubai.monthly, dubai.monthly.absolute, dubai.monthly.return, file = "clean data/Dubai Fateh monthly.RData")
 save(natgas.us.monthly, natgas.us.monthly.absolute, natgas.us.monthly.return, file = "clean data/Nat Gas Henry Hub monthly.RData")
 save(wti.monthly, wti.monthly.absolute, wti.monthly.return, file = "clean data/WTI Crude monthly.RData")
+save(lng.monthly, lng.monthly.absolute, lng.monthly.return, file = "clean data/LNG Asia monthly.RData")
