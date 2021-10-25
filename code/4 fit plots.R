@@ -111,6 +111,38 @@ dubai.fit.plot
 # ggsave(filename = "plots/4 Dubai fit plot.pdf", plot = dubai.fit.plot, device = cairo_pdf, width = 12, height = 7)
 
 
+### LNG
+# Prepare data for plotting
+lng.plot.data <- data.frame("time" = zoo::yearmon(time(ts.lng.monthly.absolute)),
+                              "price" = ts.lng.monthly.absolute[1:length(ts.lng.monthly.absolute)],
+                              "log.return" = log(ts.lng.monthly.absolute[1:length(ts.lng.monthly.absolute)] / lag(ts.lng.monthly.absolute[1:length(ts.lng.monthly.absolute)])),
+                              "diff" = c(NA, diff(ts.lng.monthly.absolute[1:length(ts.lng.monthly.absolute)], 1)))
+
+lng.plot.data$no.change <- c(rep(NA, length(ts.lng.monthly.absolute) - 12), rep(ts.lng.monthly.absolute[length(ts.lng.monthly.absolute) - 12], 12))
+lng.plot.data$ses <- c(rep(NA, length(ts.lng.monthly.absolute) - 12), ses.pred$lng.log.return)
+lng.plot.data$arima <- c(rep(NA, length(ts.lng.monthly.absolute) - 12), arima.pred$lng.log.return)
+lng.plot.data$ann <- c(rep(NA, length(ts.lng.monthly.absolute) - 12), ann.pred$lng.log.return)
+lng.plot.data$rf <- c(rep(NA, length(ts.lng.monthly.absolute) - 12), rf.pred$lng.log.return)
+
+lng.plot.data <- pivot_longer(lng.plot.data, cols = c("price", "no.change", "ses", "arima", "ann", "rf"), names_to = "series", values_to = "value")
+lng.plot.data$series <- factor(lng.plot.data$series, levels = c("price", "no.change", "ses", "arima", "ann", "rf"))
+
+# Plot
+lng.fit.plot <- ggplot(data = lng.plot.data, aes(x = time, y = value, color = series)) +
+  geom_line() +
+  scale_color_manual(values = c("black", "red", "orange", "green", "blue", "purple"), name = "Series", labels = c("price", "no change", "SES", "ARIMA", "ANN", "RF"), guide = FALSE) +
+  labs(title = "LNG Asia", x = "Time", y = "USD/mmBTU") +
+  facet_zoom(x = series == "price", xlim = c(2019, 2021), ylim = c(0, 6), zoom.size = 1) +
+  theme_bw() +
+  theme(panel.grid = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+
+lng.fit.plot
+
+# Save the plot
+ggsave(filename = "plots/4 LNG fit plot.pdf", plot = lng.fit.plot, device = cairo_pdf, width = 12, height = 7)
+
+
 ### NatGas
 # Prepare data for plotting
 natgas.us.plot.data <- data.frame("time" = zoo::yearmon(time(ts.natgas.us.monthly.absolute)),
@@ -176,7 +208,7 @@ wti.fit.plot
 
 
 ### Clustered version
-fit.plots <- ggarrange(apsp.fit.plot, brent.fit.plot, dubai.fit.plot, natgas.us.fit.plot, wti.fit.plot,
+fit.plots <- ggarrange(apsp.fit.plot, brent.fit.plot, dubai.fit.plot, lng.fit.plot, natgas.us.fit.plot, wti.fit.plot,
                        ncol = 2, nrow = 3)
 
 fit.plots
