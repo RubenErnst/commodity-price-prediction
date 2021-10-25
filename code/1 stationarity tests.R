@@ -56,3 +56,8 @@ adf.results$p <- c(adf.test(ts.apsp.monthly.absolute, "stationary", k = 0)$p.val
 
 ### Save the results
 save(adf.results, file = "results/descriptive stats/ADF.RData")
+adf.results$statistic <- ifelse(adf.results$p <= 0.01, paste0(as.character(adf.results$statistic), "***"),
+                        ifelse(adf.results$p < 0.05, paste0(as.character(adf.results$statistic), "**"),
+                               ifelse(adf.results$p < 0.1, paste0(as.character(adf.results$statistic), "*"),
+                                      as.character(adf.results$statistic))))
+openxlsx::write.xlsx(adf.results, file = "results/descriptive stats/ADF.xlsx")
