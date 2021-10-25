@@ -375,4 +375,4 @@ dispersion.plot <- ggplot(data = boxplot.data, aes(x = year, y = price)) +
 
 dispersion.plot
 
-ggsave("plots/1 Price dispersion plot.pdf", dispersion.plot, device = cairo_pdf, width = 12, height = 9)
+ggsave("plots/1_Price dispersion plot.pdf", dispersion.plot, device = cairo_pdf, width = 12, height = 9)
