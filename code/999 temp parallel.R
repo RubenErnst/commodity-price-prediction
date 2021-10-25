@@ -161,9 +161,6 @@ temp$hidden_config <- unlist(temp$hidden_config)
 temp$mae <- unlist(temp$mae)
 temp$mape <- unlist(temp$mape)
 
-temp2 <- temp
-save(temp2, file = "results/temp/1l.RData")
-
 tuning.results.lng.log.returns.forked <- rbind(tuning.results.lng.log.returns.forked, temp); rm(temp)
 
 save(tuning.results.lng.log.returns.forked, file = "results/ml models/LNG_log_returns_forked_2.RData")
