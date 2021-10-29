@@ -424,6 +424,13 @@ save(tuning.results.wti.log.returns.forked, file = "results/ml models/RF_WTI_log
 
 
 ### Save predictions of best configurations
+load("results/ml models/RF_APSP_log_returns_forked.RData")
+load("results/ml models/RF_Brent_log_returns_forked.RData")
+load("results/ml models/RF_Dubai_log_returns_forked.RData")
+load("results/ml models/RF_LNG_log_returns_forked.RData")
+load("results/ml models/RF_NatGas_log_returns_forked.RData")
+load("results/ml models/RF_WTI_log_returns_forked.RData")
+
 n_lags <- tuning.results.apsp.log.returns.forked$n_lags[which.min(tuning.results.apsp.log.returns.forked$mape)]
 ntree <- tuning.results.apsp.log.returns.forked$ntree[which.min(tuning.results.apsp.log.returns.forked$mape)]
 mtry <- tuning.results.apsp.log.returns.forked$mtry[which.min(tuning.results.apsp.log.returns.forked$mape)]
@@ -460,6 +467,18 @@ set.seed(42)
 dubai.pred.log.return <- ts.dubai.monthly.absolute[(nrow(lagged) - 12 + 1)] * cumprod(exp(rf_recursive_pred(model = randomForest(x = lagged[(n_lags + 1):(nrow(lagged) - n_lags),-1], y = lagged$y[(n_lags + 1):(nrow(lagged) - n_lags)], ntree = ntree, mtry = mtry), h = 12, lagged.data = lagged[(nrow(lagged) - 12 + 1), -1])))
 
 
+n_lags <- tuning.results.lng.log.returns.forked$n_lags[which.min(tuning.results.lng.log.returns.forked$mape)]
+ntree <- tuning.results.lng.log.returns.forked$ntree[which.min(tuning.results.lng.log.returns.forked$mape)]
+mtry <- tuning.results.lng.log.returns.forked$mtry[which.min(tuning.results.lng.log.returns.forked$mape)]
+lagged <- data.frame("y" = log(ts.lng.monthly.absolute[1:length(ts.lng.monthly.absolute)] / lag(ts.lng.monthly.absolute[1:length(ts.lng.monthly.absolute)]))[-1])
+for (i in 1:n_lags){
+  eval(parse(text = paste0("lagged$l", i, " = lag(lagged$y[1:nrow(lagged)], ", i, ")")))
+}
+
+set.seed(42)
+lng.pred.log.return <- ts.lng.monthly.absolute[(nrow(lagged) - 12 + 1)] * cumprod(exp(rf_recursive_pred(model = randomForest(x = lagged[(n_lags + 1):(nrow(lagged) - n_lags),-1], y = lagged$y[(n_lags + 1):(nrow(lagged) - n_lags)], ntree = ntree, mtry = mtry), h = 12, lagged.data = lagged[(nrow(lagged) - 12 + 1), -1])))
+
+
 n_lags <- tuning.results.natgas.us.log.returns.forked$n_lags[which.min(tuning.results.natgas.us.log.returns.forked$mape)]
 ntree <- tuning.results.natgas.us.log.returns.forked$ntree[which.min(tuning.results.natgas.us.log.returns.forked$mape)]
 mtry <- tuning.results.natgas.us.log.returns.forked$mtry[which.min(tuning.results.natgas.us.log.returns.forked$mape)]
@@ -486,6 +505,7 @@ wti.pred.log.return <- ts.wti.monthly.absolute[(nrow(lagged) - 12 + 1)] * cumpro
 rf.pred <- data.frame("apsp.log.return" = apsp.pred.log.return,
                       "brent.log.return" = brent.pred.log.return,
                       "dubai.log.return" = dubai.pred.log.return,
+                      "lng.log.return" = lng.pred.log.return,
                       "natgas.us.log.return" = natgas.us.pred.log.return,
                       "wti.log.return" = wti.pred.log.return)
 save(rf.pred, file = "results/ml models/RF pred.RData")
@@ -493,13 +513,15 @@ save(rf.pred, file = "results/ml models/RF pred.RData")
 load("results/ml models/RF_APSP_log_returns_forked.RData")
 load("results/ml models/RF_Brent_log_returns_forked.RData")
 load("results/ml models/RF_Dubai_log_returns_forked.RData")
+load("results/ml models/RF_LNG_log_returns_forked.RData")
 load("results/ml models/RF_NatGas_log_returns_forked.RData")
 load("results/ml models/RF_WTI_log_returns_forked.RData")
 
-rf.results <- cbind(data.frame("commodity" = c("APSP", "Brent", "Dubai Fateh", "NatGas Henry Hub", "WTI")),
+rf.results <- cbind(data.frame("commodity" = c("APSP", "Brent", "Dubai Fateh", "LNG Asia", "NatGas Henry Hub", "WTI")),
                      rbind(tuning.results.apsp.log.returns.forked[which.min(tuning.results.apsp.log.returns.forked$mape),],
                            tuning.results.brent.log.returns.forked[which.min(tuning.results.brent.log.returns.forked$mape),],
                            tuning.results.dubai.log.returns.forked[which.min(tuning.results.dubai.log.returns.forked$mape),],
+                           tuning.results.lng.log.returns.forked[which.min(tuning.results.lng.log.returns.forked$mape),],
                            tuning.results.natgas.us.log.returns.forked[which.min(tuning.results.natgas.us.log.returns.forked$mape),],
                            tuning.results.wti.log.returns.forked[which.min(tuning.results.wti.log.returns.forked$mape),]))
 
