@@ -132,7 +132,7 @@ lng.fit.plot <- ggplot(data = lng.plot.data, aes(x = time, y = value, color = se
   geom_line() +
   scale_color_manual(values = c("black", "red", "orange", "green", "blue", "purple"), name = "Series", labels = c("price", "no change", "SES", "ARIMA", "ANN", "RF"), guide = FALSE) +
   labs(title = "LNG Asia", x = "Time", y = "USD/mmBTU") +
-  facet_zoom(x = series == "price", xlim = c(2019, 2021), ylim = c(0, 6), zoom.size = 1) +
+  facet_zoom(x = series == "price", xlim = c(2019, 2021), ylim = c(0, 23), zoom.size = 1) +
   theme_bw() +
   theme(panel.grid = element_blank(),
         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
@@ -140,7 +140,7 @@ lng.fit.plot <- ggplot(data = lng.plot.data, aes(x = time, y = value, color = se
 lng.fit.plot
 
 # Save the plot
-ggsave(filename = "plots/4 LNG fit plot.pdf", plot = lng.fit.plot, device = cairo_pdf, width = 12, height = 7)
+# ggsave(filename = "plots/4 LNG fit plot.pdf", plot = lng.fit.plot, device = cairo_pdf, width = 12, height = 7)
 
 
 ### NatGas
