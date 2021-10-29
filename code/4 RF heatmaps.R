@@ -7,6 +7,7 @@ library(ggpubr)
 load("results/ml models/RF_APSP_log_returns_forked.RData")
 load("results/ml models/RF_Brent_log_returns_forked.RData")
 load("results/ml models/RF_Dubai_log_returns_forked.RData")
+load("results/ml models/RF_LNG_log_returns_forked.RData")
 load("results/ml models/RF_NatGas_log_returns_forked.RData")
 load("results/ml models/RF_WTI_log_returns_forked.RData")
 
@@ -34,7 +35,7 @@ apsp.mape.heatmap <- ggplot(data = apsp.plot.data, aes(x = config, y = n_lags, f
   scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
   labs(title = "APSP", x = "hyperparameter configuration", y = "nr. of lags used") +
   theme_bw() +
-  theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
+  theme(axis.text.x = element_text(family = "Arial", color = "#000000", size = 6, angle = 45, hjust = 1, vjust = 1.3),
         axis.line = element_blank(),
         panel.border = element_blank(),
         axis.ticks = element_blank(),
@@ -70,7 +71,7 @@ brent.mape.heatmap <- ggplot(data = brent.plot.data, aes(x = config, y = n_lags,
   scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
   labs(title = "Brent", x = "hyperparameter configuration", y = "nr. of lags used") +
   theme_bw() +
-  theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
+  theme(axis.text.x = element_text(family = "Arial", color = "#000000", size = 6, angle = 45, hjust = 1, vjust = 1.3),
         axis.line = element_blank(),
         panel.border = element_blank(),
         axis.ticks = element_blank(),
@@ -106,7 +107,7 @@ dubai.mape.heatmap <- ggplot(data = dubai.plot.data, aes(x = config, y = n_lags,
   scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
   labs(title = "Dubai Fateh", x = "hyperparameter configuration", y = "nr. of lags used") +
   theme_bw() +
-  theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
+  theme(axis.text.x = element_text(family = "Arial", color = "#000000", size = 6, angle = 45, hjust = 1, vjust = 1.3),
         axis.line = element_blank(),
         panel.border = element_blank(),
         axis.ticks = element_blank(),
@@ -142,7 +143,7 @@ lng.mape.heatmap <- ggplot(data = lng.plot.data, aes(x = config, y = n_lags, fil
   scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
   labs(title = "LNG Asia", x = "hyperparameter configuration", y = "nr. of lags used") +
   theme_bw() +
-  theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
+  theme(axis.text.x = element_text(family = "Arial", color = "#000000", size = 6, angle = 45, hjust = 1, vjust = 1.3),
         axis.line = element_blank(),
         panel.border = element_blank(),
         axis.ticks = element_blank(),
@@ -152,7 +153,7 @@ lng.mape.heatmap <- ggplot(data = lng.plot.data, aes(x = config, y = n_lags, fil
 
 lng.mape.heatmap
 
-ggsave(filename = "plots/3 RF LNG error heatmap.pdf", plot = lng.mape.heatmap, device = cairo_pdf)
+# ggsave(filename = "plots/3 RF LNG error heatmap.pdf", plot = lng.mape.heatmap, device = cairo_pdf)
 
 
 ### NatGas
@@ -178,7 +179,7 @@ natgas.us.mape.heatmap <- ggplot(data = natgas.us.plot.data, aes(x = config, y =
   scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
   labs(title = "Natural Gas Henry Hub", x = "hyperparameter configuration", y = "nr. of lags used") +
   theme_bw() +
-  theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
+  theme(axis.text.x = element_text(family = "Arial", color = "#000000", size = 6, angle = 45, hjust = 1, vjust = 1.3),
         axis.line = element_blank(),
         panel.border = element_blank(),
         axis.ticks = element_blank(),
@@ -214,7 +215,7 @@ wti.mape.heatmap <- ggplot(data = wti.plot.data, aes(x = config, y = n_lags, fil
   scale_fill_viridis(name = "median\nMAPE", option = "magma", discrete = FALSE, direction = -1) +
   labs(title = "WTI", x = "hyperparameter configuration", y = "nr. of lags used") +
   theme_bw() +
-  theme(axis.text.x = element_text(family = "Arial", color = "#000000", angle = 45, hjust = 1, vjust = 1.2),
+  theme(axis.text.x = element_text(family = "Arial", color = "#000000", size = 6, angle = 45, hjust = 1, vjust = 1.3),
         axis.line = element_blank(),
         panel.border = element_blank(),
         axis.ticks = element_blank(),
