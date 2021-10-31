@@ -1,2 +1,2 @@
 # commodities-pricing
-Commodities pricing using machine learning models compared to autoregressive models.
+Commodity price prediction using machine learning models compared to econometric autoregressive models.
