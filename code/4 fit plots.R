@@ -199,7 +199,8 @@ wti.fit.plot <- ggplot(data = wti.plot.data, aes(x = time, y = value, color = se
   facet_zoom(x = series == "price", xlim = c(2019, 2021), ylim = c(15, 70), zoom.size = 1) +
   theme_bw() +
   theme(panel.grid = element_blank(),
-        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5), legend.position = c(1.2,0.5))
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+        legend.position = c(-0.13, -1), legend.direction = "horizontal")
 
 wti.fit.plot
 
@@ -209,8 +210,8 @@ wti.fit.plot
 
 ### Clustered version
 fit.plots <- ggarrange(apsp.fit.plot, brent.fit.plot, dubai.fit.plot, lng.fit.plot, natgas.us.fit.plot, wti.fit.plot,
-                       ncol = 2, nrow = 3)
+                       ncol = 2, nrow = 3, common.legend = TRUE, legend = "bottom")
 
 fit.plots
 
-ggsave(filename = "plots/4 All fit plots.pdf", plot = fit.plots, device = cairo_pdf, width = 12, height = 12)
+ggsave(filename = "plots/4 All fit plots.pdf", plot = fit.plots, device = cairo_pdf, width = 12, height = 9)
