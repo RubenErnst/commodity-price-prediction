@@ -3,6 +3,7 @@ rm(list = ls())
 library(tidyverse)
 library(viridis)
 library(ggpubr)
+library(plotly)
 
 load("results/ml models/APSP_log_returns_forked_2.RData")
 load("results/ml models/Brent_log_returns_forked_2.RData")
@@ -332,3 +333,17 @@ ann.heatmaps <- ggarrange(apsp.mape.heatmap, brent.mape.heatmap, dubai.mape.heat
 ann.heatmaps
 
 ggsave(filename = "plots/3 ANN combined error heatmaps.pdf", plot = ann.heatmaps, device = cairo_pdf, width = 9, height = 12)
+
+
+
+### 3D surface plots
+## APSP
+apsp.plot.data <- select(tuning.results.apsp.log.returns.forked, -mae)
+apsp.plot.data$n_hl <- sapply(apsp.plot.data$hidden_config, function(x){length(unlist(str_split(x, ", ")))})
+apsp.plot.data$n_nodes <- sapply(apsp.plot.data$hidden_config, function(x){sum(as.numeric(unlist(str_split(x, ", "))))})
+
+# Remove outliers
+apsp.plot.data <- subset(apsp.plot.data, mape <= quantile(apsp.plot.data$mape, 0.95))
+
+apsp.mape.surface <- plot_ly(data = apsp.plot.data, x = ~n_lags, y = ~n_nodes, z = ~mape, color = ~n_hl, alpha = 0.5)
+apsp.mape.surface
