@@ -39,6 +39,9 @@ apsp.desc <- merge(select(aggregate(price ~ year, apsp.desc, quantile, 0), "quan
   merge(., select(aggregate(price ~ year, apsp.desc, sd),
                   "sd" = price, year),
         by = "year", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ year, apsp.desc, function(x){sd(x) / mean(x)}),
+                  "sd.perc" = price, year),
+        by = "year", all.x = TRUE) %>%
   merge(., select(aggregate(price ~ year, apsp.desc, skewness),
                   "skewness" = price, year),
         by = "year", all.x = TRUE) %>%
@@ -81,6 +84,9 @@ brent.desc <- merge(select(aggregate(price ~ year, brent.desc, quantile, 0), "qu
         by = "year", all.x = TRUE) %>%
   merge(., select(aggregate(price ~ year, brent.desc, sd),
                   "sd" = price, year),
+        by = "year", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ year, brent.desc, function(x){sd(x) / mean(x)}),
+                  "sd.perc" = price, year),
         by = "year", all.x = TRUE) %>%
   merge(., select(aggregate(price ~ year, brent.desc, skewness),
                   "skewness" = price, year),
@@ -125,6 +131,9 @@ dubai.desc <- merge(select(aggregate(price ~ year, dubai.desc, quantile, 0), "qu
   merge(., select(aggregate(price ~ year, dubai.desc, sd),
                   "sd" = price, year),
         by = "year", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ year, dubai.desc, function(x){sd(x) / mean(x)}),
+                  "sd.perc" = price, year),
+        by = "year", all.x = TRUE) %>%
   merge(., select(aggregate(price ~ year, dubai.desc, skewness),
                   "skewness" = price, year),
         by = "year", all.x = TRUE) %>%
@@ -167,6 +176,9 @@ lng.desc <- merge(select(aggregate(price ~ year, lng.desc, quantile, 0), "quanti
         by = "year", all.x = TRUE) %>%
   merge(., select(aggregate(price ~ year, lng.desc, sd),
                   "sd" = price, year),
+        by = "year", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ year, lng.desc, function(x){sd(x) / mean(x)}),
+                  "sd.perc" = price, year),
         by = "year", all.x = TRUE) %>%
   merge(., select(aggregate(price ~ year, lng.desc, skewness),
                   "skewness" = price, year),
@@ -211,6 +223,9 @@ natgas.us.desc <- merge(select(aggregate(price ~ year, natgas.us.desc, quantile,
   merge(., select(aggregate(price ~ year, natgas.us.desc, sd),
                   "sd" = price, year),
         by = "year", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ year, natgas.us.desc, function(x){sd(x) / mean(x)}),
+                  "sd.perc" = price, year),
+        by = "year", all.x = TRUE) %>%
   merge(., select(aggregate(price ~ year, natgas.us.desc, skewness),
                   "skewness" = price, year),
         by = "year", all.x = TRUE) %>%
@@ -253,6 +268,9 @@ wti.desc <- merge(select(aggregate(price ~ year, wti.desc, quantile, 0), "quanti
         by = "year", all.x = TRUE) %>%
   merge(., select(aggregate(price ~ year, wti.desc, sd),
                   "sd" = price, year),
+        by = "year", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ year, wti.desc, function(x){sd(x) / mean(x)}),
+                  "sd.perc" = price, year),
         by = "year", all.x = TRUE) %>%
   merge(., select(aggregate(price ~ year, wti.desc, skewness),
                   "skewness" = price, year),
@@ -324,6 +342,9 @@ descriptives.short <- merge(select(aggregate(price ~ commodity, descriptives.sho
         by = "commodity", all.x = TRUE) %>%
   merge(., select(aggregate(price ~ commodity, descriptives.short, sd),
                   "sd" = price, commodity),
+        by = "commodity", all.x = TRUE) %>%
+  merge(., select(aggregate(price ~ commodity, descriptives.short, function(x){sd(x) / mean(x)}),
+                  "sd.perc" = price, commodity),
         by = "commodity", all.x = TRUE) %>%
   merge(., select(aggregate(price ~ commodity, descriptives.short, skewness),
                   "skewness" = price, commodity),
