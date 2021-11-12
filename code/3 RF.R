@@ -527,3 +527,22 @@ rf.results <- cbind(data.frame("commodity" = c("APSP", "Brent", "Dubai Fateh", "
 
 save(rf.results, file = "results/ml models/RF results.RData")
 openxlsx::write.xlsx(rf.results, file = "results/ml models/RF results.xlsx")
+
+
+### Prepare and save no-change results
+results.no.change <- data.frame("commodity" = c("APSP", "Brent", "Dubai Fateh", "LNG Asia", "NatGas Henry Hub", "WTI"),
+                                "model" = rep("no-change", 6),
+                                "mae" = c(mae(ts.apsp.monthly.absolute[(length(ts.apsp.monthly.absolute) - 11): length(ts.apsp.monthly.absolute)], rep(ts.apsp.monthly.absolute[length(ts.apsp.monthly.absolute) - 12], 12)),
+                                          mae(ts.brent.monthly.absolute[(length(ts.brent.monthly.absolute) - 11): length(ts.brent.monthly.absolute)], rep(ts.brent.monthly.absolute[length(ts.brent.monthly.absolute) - 12], 12)),
+                                          mae(ts.dubai.monthly.absolute[(length(ts.dubai.monthly.absolute) - 11): length(ts.dubai.monthly.absolute)], rep(ts.dubai.monthly.absolute[length(ts.dubai.monthly.absolute) - 12], 12)),
+                                          mae(ts.lng.monthly.absolute[(length(ts.lng.monthly.absolute) - 11): length(ts.lng.monthly.absolute)], rep(ts.lng.monthly.absolute[length(ts.lng.monthly.absolute) - 12], 12)),
+                                          mae(ts.natgas.us.monthly.absolute[(length(ts.natgas.us.monthly.absolute) - 11): length(ts.natgas.us.monthly.absolute)], rep(ts.natgas.us.monthly.absolute[length(ts.natgas.us.monthly.absolute) - 12], 12)),
+                                          mae(ts.wti.monthly.absolute[(length(ts.wti.monthly.absolute) - 11): length(ts.wti.monthly.absolute)], rep(ts.wti.monthly.absolute[length(ts.wti.monthly.absolute) - 12], 12))),
+                                "mape" = c(mape(ts.apsp.monthly.absolute[(length(ts.apsp.monthly.absolute) - 11): length(ts.apsp.monthly.absolute)], rep(ts.apsp.monthly.absolute[length(ts.apsp.monthly.absolute) - 12], 12)),
+                                           mape(ts.brent.monthly.absolute[(length(ts.brent.monthly.absolute) - 11): length(ts.brent.monthly.absolute)], rep(ts.brent.monthly.absolute[length(ts.brent.monthly.absolute) - 12], 12)),
+                                           mape(ts.dubai.monthly.absolute[(length(ts.dubai.monthly.absolute) - 11): length(ts.dubai.monthly.absolute)], rep(ts.dubai.monthly.absolute[length(ts.dubai.monthly.absolute) - 12], 12)),
+                                           mape(ts.lng.monthly.absolute[(length(ts.lng.monthly.absolute) - 11): length(ts.lng.monthly.absolute)], rep(ts.lng.monthly.absolute[length(ts.lng.monthly.absolute) - 12], 12)),
+                                           mape(ts.natgas.us.monthly.absolute[(length(ts.natgas.us.monthly.absolute) - 11): length(ts.natgas.us.monthly.absolute)], rep(ts.natgas.us.monthly.absolute[length(ts.natgas.us.monthly.absolute) - 12], 12)),
+                                           mape(ts.wti.monthly.absolute[(length(ts.wti.monthly.absolute) - 11): length(ts.wti.monthly.absolute)], rep(ts.wti.monthly.absolute[length(ts.wti.monthly.absolute) - 12], 12))))
+
+openxlsx::write.xlsx(results.no.change, file = "results/econometric models/No-change results.xlsx")
